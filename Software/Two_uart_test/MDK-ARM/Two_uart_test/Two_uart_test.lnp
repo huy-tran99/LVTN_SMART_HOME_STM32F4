@@ -1,0 +1,26 @@
+--cpu=Cortex-M4.fp.sp
+"two_uart_test\startup_stm32f407xx.o"
+"two_uart_test\main.o"
+"two_uart_test\stm32f4xx_it.o"
+"two_uart_test\stm32f4xx_hal_msp.o"
+"two_uart_test\stm32f4xx_hal_tim.o"
+"two_uart_test\stm32f4xx_hal_tim_ex.o"
+"two_uart_test\stm32f4xx_hal_uart.o"
+"two_uart_test\stm32f4xx_hal_rcc.o"
+"two_uart_test\stm32f4xx_hal_rcc_ex.o"
+"two_uart_test\stm32f4xx_hal_flash.o"
+"two_uart_test\stm32f4xx_hal_flash_ex.o"
+"two_uart_test\stm32f4xx_hal_flash_ramfunc.o"
+"two_uart_test\stm32f4xx_hal_gpio.o"
+"two_uart_test\stm32f4xx_hal_dma_ex.o"
+"two_uart_test\stm32f4xx_hal_dma.o"
+"two_uart_test\stm32f4xx_hal_pwr.o"
+"two_uart_test\stm32f4xx_hal_pwr_ex.o"
+"two_uart_test\stm32f4xx_hal_cortex.o"
+"two_uart_test\stm32f4xx_hal.o"
+"two_uart_test\stm32f4xx_hal_exti.o"
+"two_uart_test\system_stm32f4xx.o"
+--library_type=microlib --strict --scatter "Two_uart_test\Two_uart_test.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "Two_uart_test.map" -o Two_uart_test\Two_uart_test.axf
