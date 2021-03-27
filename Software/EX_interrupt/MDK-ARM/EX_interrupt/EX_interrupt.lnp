@@ -1,0 +1,26 @@
+--cpu=Cortex-M4.fp.sp
+"ex_interrupt\startup_stm32f407xx.o"
+"ex_interrupt\main.o"
+"ex_interrupt\stm32f4xx_it.o"
+"ex_interrupt\stm32f4xx_hal_msp.o"
+"ex_interrupt\stm32f4xx_hal_tim.o"
+"ex_interrupt\stm32f4xx_hal_tim_ex.o"
+"ex_interrupt\stm32f4xx_hal_uart.o"
+"ex_interrupt\stm32f4xx_hal_rcc.o"
+"ex_interrupt\stm32f4xx_hal_rcc_ex.o"
+"ex_interrupt\stm32f4xx_hal_flash.o"
+"ex_interrupt\stm32f4xx_hal_flash_ex.o"
+"ex_interrupt\stm32f4xx_hal_flash_ramfunc.o"
+"ex_interrupt\stm32f4xx_hal_gpio.o"
+"ex_interrupt\stm32f4xx_hal_dma_ex.o"
+"ex_interrupt\stm32f4xx_hal_dma.o"
+"ex_interrupt\stm32f4xx_hal_pwr.o"
+"ex_interrupt\stm32f4xx_hal_pwr_ex.o"
+"ex_interrupt\stm32f4xx_hal_cortex.o"
+"ex_interrupt\stm32f4xx_hal.o"
+"ex_interrupt\stm32f4xx_hal_exti.o"
+"ex_interrupt\system_stm32f4xx.o"
+--library_type=microlib --strict --scatter "EX_interrupt\EX_interrupt.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "EX_interrupt.map" -o EX_interrupt\EX_interrupt.axf
