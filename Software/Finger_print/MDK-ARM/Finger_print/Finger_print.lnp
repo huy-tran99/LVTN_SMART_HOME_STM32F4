@@ -1,0 +1,27 @@
+--cpu=Cortex-M4.fp.sp
+"finger_print\startup_stm32f407xx.o"
+"finger_print\main.o"
+"finger_print\stm32f4xx_it.o"
+"finger_print\stm32f4xx_hal_msp.o"
+"finger_print\finger.o"
+"finger_print\stm32f4xx_hal_tim.o"
+"finger_print\stm32f4xx_hal_tim_ex.o"
+"finger_print\stm32f4xx_hal_uart.o"
+"finger_print\stm32f4xx_hal_rcc.o"
+"finger_print\stm32f4xx_hal_rcc_ex.o"
+"finger_print\stm32f4xx_hal_flash.o"
+"finger_print\stm32f4xx_hal_flash_ex.o"
+"finger_print\stm32f4xx_hal_flash_ramfunc.o"
+"finger_print\stm32f4xx_hal_gpio.o"
+"finger_print\stm32f4xx_hal_dma_ex.o"
+"finger_print\stm32f4xx_hal_dma.o"
+"finger_print\stm32f4xx_hal_pwr.o"
+"finger_print\stm32f4xx_hal_pwr_ex.o"
+"finger_print\stm32f4xx_hal_cortex.o"
+"finger_print\stm32f4xx_hal.o"
+"finger_print\stm32f4xx_hal_exti.o"
+"finger_print\system_stm32f4xx.o"
+--library_type=microlib --strict --scatter "Finger_print\Finger_print.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "Finger_print.map" -o Finger_print\Finger_print.axf
