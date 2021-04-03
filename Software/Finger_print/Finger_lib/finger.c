@@ -45,9 +45,8 @@ uint8_t receive_finger_search(uint8_t len)
    return temp;
 }
 
-uint8_t verifyPassword(uint32_t pass)
+uint8_t verifyPassword(void)
 {
-      uint16_t	checksum=0;
 		memset(Finger.TxBuffer,0,sizeof(Finger.TxBuffer));
 		Finger.TxBuffer[0]=0xEF;
 		Finger.TxBuffer[1]=0x01;
@@ -59,14 +58,12 @@ uint8_t verifyPassword(uint32_t pass)
 		Finger.TxBuffer[7]=0x00;
 		Finger.TxBuffer[8]=0x07;
 		Finger.TxBuffer[9]=0x13;
-		Finger.TxBuffer[10]=pass>>24 ;
-		Finger.TxBuffer[11]=pass>>16;
-      Finger.TxBuffer[12]=pass>>8;
-		Finger.TxBuffer[13]=pass&0x000000FF;
-      for(uint8_t	i=6 ; i<=13 ; i++)
-		   checksum+=Finger.TxBuffer[i];
-      Finger.TxBuffer[14] = checksum >> 8; 
-	   Finger.TxBuffer[15] = checksum & 0x00FF; 
+		Finger.TxBuffer[10]=0x00;
+		Finger.TxBuffer[11]=0x00;
+      Finger.TxBuffer[12]=0x00;
+		Finger.TxBuffer[13]=0x00;
+      Finger.TxBuffer[14] = 0x00; 
+	   Finger.TxBuffer[15] = 0x1B; 
 
 		HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,16,200);
 		return receive_finger(12);
@@ -131,6 +128,7 @@ uint8_t image2Tz(uint8_t slot)
    **/
 }
 
+
 uint8_t match(void)
 {  //so sanh 2 bo dem ve trung khop van tay
    memset(Finger.TxBuffer,0,sizeof(Finger.TxBuffer));
@@ -152,7 +150,7 @@ uint8_t match(void)
    /** 
       confirmation == 00H: templates of the two buffers are matching!
       confirmation == 01H: error when receiving package
-      confirmation == 06H: templates of the two buffers aren't matching!
+      confirmation == 08H: templates of the two buffers aren't matching!
    **/
 }
 
@@ -179,6 +177,7 @@ uint8_t createModel(void)
       confirmation == 0aH: fail to combine the character files. That's, the character files don't belong to one finger
    **/
 }
+
 uint8_t storeModel(uint8_t PageID)
 {  // luu ma van tay chuan vao flash
    memset(Finger.TxBuffer,0,sizeof(Finger.TxBuffer));
@@ -208,7 +207,6 @@ uint8_t storeModel(uint8_t PageID)
       confirmation == 18H: eror when writing Flash
    **/
 }
-
 
 uint8_t search(void)
 {  //lay ma van tay chua tu flash ra de so sanh voi van tay vua nhan tren bo dem

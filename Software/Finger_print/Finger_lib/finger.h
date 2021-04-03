@@ -74,7 +74,7 @@ typedef struct
 uint8_t receive_finger(uint8_t len);
 uint8_t receive_finger_match(uint8_t len);
 uint8_t receive_finger_search(uint8_t len);
-uint8_t verifyPassword(uint32_t pass);
+uint8_t verifyPassword(void);
 uint8_t getImage(void);
 uint8_t image2Tz(uint8_t slot);
 uint8_t createModel(void);
