@@ -1,0 +1,28 @@
+--cpu=Cortex-M4.fp.sp
+"lcd_20x04\startup_stm32f407xx.o"
+"lcd_20x04\main.o"
+"lcd_20x04\stm32f4xx_it.o"
+"lcd_20x04\stm32f4xx_hal_msp.o"
+"lcd_20x04\lcd_i2cmodule.o"
+"lcd_20x04\stm32f4xx_hal_i2c.o"
+"lcd_20x04\stm32f4xx_hal_i2c_ex.o"
+"lcd_20x04\stm32f4xx_hal_tim.o"
+"lcd_20x04\stm32f4xx_hal_tim_ex.o"
+"lcd_20x04\stm32f4xx_hal_rcc.o"
+"lcd_20x04\stm32f4xx_hal_rcc_ex.o"
+"lcd_20x04\stm32f4xx_hal_flash.o"
+"lcd_20x04\stm32f4xx_hal_flash_ex.o"
+"lcd_20x04\stm32f4xx_hal_flash_ramfunc.o"
+"lcd_20x04\stm32f4xx_hal_gpio.o"
+"lcd_20x04\stm32f4xx_hal_dma_ex.o"
+"lcd_20x04\stm32f4xx_hal_dma.o"
+"lcd_20x04\stm32f4xx_hal_pwr.o"
+"lcd_20x04\stm32f4xx_hal_pwr_ex.o"
+"lcd_20x04\stm32f4xx_hal_cortex.o"
+"lcd_20x04\stm32f4xx_hal.o"
+"lcd_20x04\stm32f4xx_hal_exti.o"
+"lcd_20x04\system_stm32f4xx.o"
+--library_type=microlib --strict --scatter "LCD_20x04\LCD_20x04.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "LCD_20x04.map" -o LCD_20x04\LCD_20x04.axf
