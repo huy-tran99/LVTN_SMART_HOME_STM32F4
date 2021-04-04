@@ -1,0 +1,10 @@
+Added Pin To Net: NetName=PA3 Pin=1-7
+Added Pin To Net: NetName=PA3 Pin=PE9-4
+Added Net: Name=PA3
+Added Pin To Net: NetName=PA5 Pin=1-8
+Added Pin To Net: NetName=PA5 Pin=PE13-4
+Added Net: Name=PA5
+Added Pin To Net: NetName=PC5 Pin=1-10
+Added Pin To Net: NetName=PC5 Pin=PD15-4
+Added Net: Name=PC5
+Added Room: Name=Sheet1
