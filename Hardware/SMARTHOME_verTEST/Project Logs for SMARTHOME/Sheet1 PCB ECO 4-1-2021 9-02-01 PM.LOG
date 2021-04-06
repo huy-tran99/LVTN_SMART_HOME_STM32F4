@@ -1,0 +1,9 @@
+Added Component: Designator=UART_3(CON4)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "Connector 4"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=UART_3-1
+Added Pin To Net: NetName=5V Pin=UART_3-2
+Added Pin To Net: NetName=RX_3 Pin=UART_3-3
+Added Pin To Net: NetName=TX_3 Pin=UART_3-4
+Added Member To Class: ClassName=Sheet1 Member=Component UART_3 
+Added Room: Name=Sheet1

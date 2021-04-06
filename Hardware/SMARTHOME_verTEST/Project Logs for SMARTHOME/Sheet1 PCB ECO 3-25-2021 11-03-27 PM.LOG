@@ -1,0 +1,23 @@
+Removed Pin From Net: NetName=TX_1 Pin=MD2-1
+Removed Pin From Net: NetName=RX_2 Pin=MD2-2
+Removed Pin From Net: NetName=TX_2 Pin=MD2-3
+Removed Pin From Net: NetName=GND Pin=MD2-4
+Removed Pin From Net: NetName=3V3 Pin=MD2-5
+Removed Pin From Net: NetName=ESP_RST Pin=MD2-6
+Removed Pin From Net: NetName=RX_1 Pin=MD2-8
+Removed Member From Class: ClassName=Sheet1 Member=MD2
+Added Component: Designator=U1(ESP8266)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=RX_1 Pin=U1-1
+Added Pin To Net: NetName=ESP_RST Pin=U1-3
+Added Pin To Net: NetName=3V3 Pin=U1-4
+Added Pin To Net: NetName=TX_1 Pin=U1-5
+Added Pin To Net: NetName=GND Pin=U1-8
+Added Pin To Net: NetName=RX_6 Pin=1-99
+Added Pin To Net: NetName=RX_6 Pin=U1-6
+Added Net: Name=RX_6
+Added Pin To Net: NetName=TX_6 Pin=1-74
+Added Pin To Net: NetName=TX_6 Pin=U1-7
+Added Net: Name=TX_6
+Added Member To Class: ClassName=Sheet1 Member=Component U1 ESP-01
+Added Room: Name=Sheet1
