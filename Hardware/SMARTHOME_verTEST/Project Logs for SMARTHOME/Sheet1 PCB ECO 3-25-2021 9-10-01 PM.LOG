@@ -1,0 +1,4 @@
+Change Net Name : Old Net Name=VCC New Net Name=5V
+Added Member To Class: ClassName=Sheet1 Member=Component 1 
+Added Member To Class: ClassName=Sheet1 Member=Component C2 104
+Added Room: Name=Sheet1

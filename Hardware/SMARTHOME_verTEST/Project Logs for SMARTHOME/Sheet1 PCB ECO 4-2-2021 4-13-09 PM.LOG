@@ -1,0 +1,42 @@
+Added Component: Designator=E8(HDR1X3)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "17-Jul-2002"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Re-released for DXP Platform."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Component: Designator=E10(HDR1X3)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "17-Jul-2002"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Re-released for DXP Platform."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Component: Designator=E12(HDR1X3)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "17-Jul-2002"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Re-released for DXP Platform."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Component: Designator=E14(HDR1X3)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "17-Jul-2002"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Re-released for DXP Platform."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=E8-1
+Added Pin To Net: NetName=GND Pin=E10-1
+Added Pin To Net: NetName=GND Pin=E12-1
+Added Pin To Net: NetName=GND Pin=E14-1
+Added Pin To Net: NetName=E8 Pin=E8-3
+Added Net: Name=E8
+Added Pin To Net: NetName=E10 Pin=E10-3
+Added Net: Name=E10
+Added Pin To Net: NetName=E12 Pin=E12-3
+Added Net: Name=E12
+Added Pin To Net: NetName=E14 Pin=E14-3
+Added Net: Name=E14
+Added Pin To Net: NetName=VCC Pin=E8-2
+Added Pin To Net: NetName=VCC Pin=E10-2
+Added Pin To Net: NetName=VCC Pin=E12-2
+Added Pin To Net: NetName=VCC Pin=E14-2
+Added Net: Name=VCC
+Added Member To Class: ClassName=Sheet1 Member=Component E8 Header 3
+Added Member To Class: ClassName=Sheet1 Member=Component E10 Header 3
+Added Member To Class: ClassName=Sheet1 Member=Component E12 Header 3
+Added Member To Class: ClassName=Sheet1 Member=Component E14 Header 3
+Added Room: Name=Sheet1
