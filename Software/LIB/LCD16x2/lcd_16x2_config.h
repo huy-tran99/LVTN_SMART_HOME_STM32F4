@@ -9,18 +9,18 @@
 *@brief: LCD i2c device address.
 *@val: Default: 0x4E
 */
-uint8_t i2cDeviceAddr = 0x4E; //* LCD i2c module default address, change i2c device address here, default is 0x4E.
+uint8_t i2cDeviceAddr_16x2 = 0x4E; //* LCD i2c module default address, change i2c device address here, default is 0x4E.
 
 /**
 *@brief: I2C_HandleTypeDef define.
 *@val: Default: hi2c1
 */
-I2C_HandleTypeDef hi2cx;
+I2C_HandleTypeDef hi2cy;
 extern I2C_HandleTypeDef hi2c1; //* Change "hi2c1" like hi2c2, hi2c3... according to which i2c type(i2c1,i2c2...) you use, default is hi2c1.
                                 //That I2C_HandleTypeDef hi2c1 comes from main.c*.
-static void hi2cx_define(void)
+static void hi2cy_define(void)
 {
-	hi2cx = hi2c1;	//* Change "hi2c1" like hi2c2, hi2c3... according to which i2c type you use, default is hi2c1.
+	hi2cy = hi2c1;	//* Change "hi2c1" like hi2c2, hi2c3... according to which i2c type you use, default is hi2c1.
 }
 
 /**

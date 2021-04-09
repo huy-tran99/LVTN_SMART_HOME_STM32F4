@@ -6,6 +6,9 @@
 extern UART_HandleTypeDef FINGERPRINT_USART;
 extern uint8_t txBuf[32];
 extern uint8_t rxBuf[32];
+extern uint8_t rxIndex;
+
+int FingerID = 0;
 
 Finger_t	Finger;
 
@@ -19,6 +22,7 @@ uint8_t receive_finger(uint8_t len)
       i++;  
    }
    temp = Finger.RxBuffer[len-3];
+	 HAL_Delay(10);
    return temp;
 }
 //#########################################################################################################################
@@ -31,6 +35,7 @@ uint8_t receive_finger_match(uint8_t len)
       i++;  
    }
    temp = Finger.RxBuffer[len-5];
+	 HAL_Delay(10);
    return temp;
 }
 uint8_t receive_finger_search(uint8_t len)
@@ -41,7 +46,9 @@ uint8_t receive_finger_search(uint8_t len)
       Finger.RxBuffer[i] = rxBuf[i];
       i++;  
    }
+		FingerID = Finger.RxBuffer[len-5];
    temp = Finger.RxBuffer[len-7];
+	 HAL_Delay(10);
    return temp;
 }
 
@@ -66,6 +73,8 @@ uint8_t verifyPassword(void)
 	   Finger.TxBuffer[15] = 0x1B; 
 
 		HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,16,200);
+		rxIndex = 0;
+		HAL_Delay(500);
 		return receive_finger(12);
    /** 
       confirmation == 00H: Correct password; 
@@ -90,6 +99,8 @@ uint8_t getImage(void)
 		Finger.TxBuffer[10]=0x00;
 		Finger.TxBuffer[11]=0x05;
 		HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,12,200);
+		rxIndex = 0;
+		HAL_Delay(500);
 		return receive_finger(12);
    /** 
       confirmation == 00H: finger collection success
@@ -117,7 +128,9 @@ uint8_t image2Tz(uint8_t slot)
 		Finger.TxBuffer[10]=slot;
 		Finger.TxBuffer[11]=0x00;
 		Finger.TxBuffer[12]=sum;
-		HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,13,100);
+		HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,13,200);
+		rxIndex = 0;
+		HAL_Delay(500);
 		return receive_finger(12);
    /** 
       confirmation == 00H: generate character file complete
@@ -144,8 +157,9 @@ uint8_t match(void)
    Finger.TxBuffer[9]=0x03;
    Finger.TxBuffer[10]=0x00;
    Finger.TxBuffer[11]=0x07;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,12,100);
-
+   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,12,200);
+	 rxIndex = 0;
+	 HAL_Delay(500);
    return receive_finger_match(14);
    /** 
       confirmation == 00H: templates of the two buffers are matching!
@@ -169,7 +183,9 @@ uint8_t createModel(void)
 	Finger.TxBuffer[9]=0x05;
 	Finger.TxBuffer[10]=0x00;
 	Finger.TxBuffer[11]=0x09;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,12,100);
+   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,12,200);
+	rxIndex = 0;
+	HAL_Delay(500);
    return receive_finger(12);
    /** 
       confirmation == 00H: operation success
@@ -198,7 +214,9 @@ uint8_t storeModel(uint8_t PageID)
    Finger.TxBuffer[12]=PageID;
 	Finger.TxBuffer[13]=0x00;
 	Finger.TxBuffer[14]=sum1;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,15,100);
+   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,15,200);
+	rxIndex = 0;
+	HAL_Delay(500);
    return receive_finger(12);
    /** 
       confirmation == 00H: storage success
@@ -232,8 +250,10 @@ uint8_t search(void)
    //tinh toan check sum
    Finger.TxBuffer[15]=0x01;
    Finger.TxBuffer[16]=0x0D;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,17,100);
-		HAL_Delay(100);
+   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,17,200);
+		rxIndex = 0;
+		HAL_Delay(500);
+	
    return receive_finger_search(16);
    /** 
       confirmation == 00H: found the matching finer
@@ -265,8 +285,9 @@ uint8_t search_master(void)
    //tinh toan check sum
    Finger.TxBuffer[15]=0x00;
    Finger.TxBuffer[16]=0x0F;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,17,100);
-		HAL_Delay(100);
+   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,17,200);
+	 rxIndex = 0;
+	HAL_Delay(500);
    return receive_finger_search(16);
    /** 
       confirmation == 00H: found the matching finer
@@ -291,8 +312,9 @@ uint8_t empty(void)
 	Finger.TxBuffer[9]=0x0D;
 	Finger.TxBuffer[10]=0x00;
 	Finger.TxBuffer[11]=0x11;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,12,100);
-
+   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,12,200);
+	rxIndex = 0;
+	HAL_Delay(500);
    return receive_finger(12);
    /** 
       confirmation == 00H: empty success
@@ -323,12 +345,18 @@ uint8_t deleteModel(uint8_t PageID)
    Finger.TxBuffer[13]=0x01;
    Finger.TxBuffer[14]=0x00;
    Finger.TxBuffer[15]=sum2;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,16,100);
-
+   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,16,200);
+	rxIndex = 0;
+	HAL_Delay(500);
    return receive_finger(12);
    /** 
       confirmation == 00H: empty success
       confirmation == 01H: error when receiving package
       confirmation == 11H: fail to clear finger library
    **/  
+}
+
+uint8_t returnFingerID(void)
+{
+   return FingerID;
 }

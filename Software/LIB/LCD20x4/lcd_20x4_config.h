@@ -9,7 +9,7 @@
 *@brief: LCD i2c device address.
 *@val: Default: 0x4E
 */
-uint8_t i2cDeviceAddr = 0x4E; //* LCD i2c module default address, change i2c device address here, default is 0x4E.
+uint8_t i2cDeviceAddr_20x4 = 0x4E; //* LCD i2c module default address, change i2c device address here, default is 0x4E.
 
 /**
 *@brief: I2C_HandleTypeDef define.

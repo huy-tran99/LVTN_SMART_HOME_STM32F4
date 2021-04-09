@@ -1,6 +1,7 @@
 /*Includes---------------------------------------------------------*/
 #include "lcd_20x4.h"
 #include "lcd_20x4_config.h"
+#include <stdio.h>
 #include <string.h>
 
 /*-----------------------------------------------------------------*/
@@ -34,7 +35,7 @@ void LCD_20x4_i2cDeviceCheck(void)
 	/* 3 is number of trials, 1000ms is timeout */
 	HAL_Delay(50);
 	hi2cx_define();
-	while (HAL_I2C_IsDeviceReady(&hi2cx, i2cDeviceAddr, 3, 1000) != HAL_OK) 
+	while (HAL_I2C_IsDeviceReady(&hi2cx, i2cDeviceAddr_20x4, 3, 1000) != HAL_OK) 
 	{	
 		
 	}
@@ -59,7 +60,7 @@ void LCD_20x4_Set_Command(uint8_t cmd)
   	data[3] = data_L;
 	
 	hi2cx_define();	
-	HAL_I2C_Master_Transmit(&hi2cx, i2cDeviceAddr, (uint8_t*)data, 4, 200);
+	HAL_I2C_Master_Transmit(&hi2cx, i2cDeviceAddr_20x4, (uint8_t*)data, 4, 200);
 }
 
 /**
@@ -81,7 +82,7 @@ void LCD_20x4_Write_Data(uint8_t datax)
   	data[3] = data_L | LCD_RS;  
 	
 	hi2cx_define();
-	HAL_I2C_Master_Transmit(&hi2cx, i2cDeviceAddr, (uint8_t*)data, 4, 200);
+	HAL_I2C_Master_Transmit(&hi2cx, i2cDeviceAddr_20x4, (uint8_t*)data, 4, 200);
 }
 
 /**

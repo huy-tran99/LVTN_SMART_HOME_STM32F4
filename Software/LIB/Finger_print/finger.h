@@ -84,5 +84,5 @@ uint8_t search(void);
 uint8_t search_master(void);
 uint8_t empty(void);
 uint8_t deleteModel(uint8_t PageID);
-
+uint8_t returnFingerID(void);
 #endif
