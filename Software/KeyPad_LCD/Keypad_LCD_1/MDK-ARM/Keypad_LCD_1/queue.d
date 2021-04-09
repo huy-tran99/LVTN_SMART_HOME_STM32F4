@@ -1,0 +1,15 @@
+keypad_lcd_1\queue.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Middlewares/Third_Party/FreeRTOS/Source/queue.c
+keypad_lcd_1\queue.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+keypad_lcd_1\queue.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+keypad_lcd_1\queue.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+keypad_lcd_1\queue.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+keypad_lcd_1\queue.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+keypad_lcd_1\queue.o: ../Core/Inc/FreeRTOSConfig.h
+keypad_lcd_1\queue.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+keypad_lcd_1\queue.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+keypad_lcd_1\queue.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+keypad_lcd_1\queue.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
+keypad_lcd_1\queue.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+keypad_lcd_1\queue.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+keypad_lcd_1\queue.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+keypad_lcd_1\queue.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
