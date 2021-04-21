@@ -29,14 +29,16 @@ extern "C" {
 //#define	LCD_READ_BUSYFLAG           0x100
 
 //Entry mode set sub-options
+/*
 typedef enum {
 	ENTRY_INCREMENT       = 0x02,
 	ENTRY_DECREMENT       = 0x00,
 	ENTRY_DISPLAY_SHIFT   = 0x01,
 	ENTRY_DISPLAY_NOSHIFT = 0x00
 } lcd_EntryMode_set_t;
-
+*/
 //Display control sub-options
+/*
 typedef enum {
 	DISPLAY_ON   = 0x04,
 	DISPLAY_OFF  = 0x00,
@@ -45,16 +47,18 @@ typedef enum {
 	BLINK_ON  = 0x01,
   	BLINK_OFF = 0x00		
 } lcd_display_control_t;
-	
+*/	
 //Cursor or display shift sub-options
+/*
 typedef enum {
 	DISPLAY_SHIFT  = 0x08,
 	CURSOR_SHIFT   = 0x00,
 	SHIFT_TO_RIGHT = 0x04,
 	SHIFT_TO_LEFT  = 0x00
 } lcd_CursorDisplay_shift_t;  	
-
+*/
 //Function set sub-options
+/*
 typedef enum {
 	MODE_8B        = 0x10,
 	MODE_4B        = 0x00,
@@ -63,7 +67,7 @@ typedef enum {
 	MODE_5X10_DOTS = 0x04,
 	MODE_5X8_DOTS  = 0x00
 } lcd_function_set_t;  
-
+*/
 //Read busy flag sub-options
 //typedef enum {
 //	BUSY_FLAG_ON  = 0x01,
