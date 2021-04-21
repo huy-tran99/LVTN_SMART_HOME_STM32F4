@@ -10,7 +10,9 @@ uint8_t str[4] = {' ', ' ', ' ', ' '};
 uint8_t kitu = 0;
 uint8_t countkitu =0;
 uint8_t kiemtra = 0;
+uint8_t block = 0;
 
+#define timeout 5000 //ms 
 
 #define C1_PORT GPIOD
 #define C1_PIN GPIO_PIN_14
@@ -192,17 +194,25 @@ void Enter()
 					MOCUA;
 					LCD_20x4_SetCursor(4,1);
 					LCD_20x4_Send_String("             D=Close",STR_NOSLIDE);
+					
+					uint64_t timestart = HAL_GetTick();
 					while(1)
 					{
+						uint64_t timefinish = HAL_GetTick();
 						key = read_keypad ();
-						if(key == 'D')
+						if(key == 'D'||timefinish-timestart >= timeout)
 						{
+							LCD_20x4_Clear(); //////////////////DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDd
+							LCD_20x4_SetCursor(1,1);
+							LCD_20x4_Send_String("       Closed!",STR_NOSLIDE);
 							DONGCUA;
+							HAL_Delay(1000);
 							LCD_20x4_Clear();
 							LCD_20x4_SetCursor(1,1);
 							LCD_20x4_Send_String("A: Quet van tay",STR_NOSLIDE);
 							LCD_20x4_SetCursor(2,1);
 							LCD_20x4_Send_String("B: Nhap mat khau",STR_NOSLIDE);
+							key = 'D';
 							break;
 						}
 							
@@ -295,6 +305,7 @@ void EnterByPassword()
   if(countkitu == 1) {
   if(str[0] == STR[0] && str[1] == STR[1] && str[2] == STR[2] && str[3] == STR[3]) 
     {
+			block = 0;
       LCD_20x4_Clear();
 			LCD_20x4_SetCursor(1,1);
       LCD_20x4_Send_String("    Correct!",STR_NOSLIDE);
@@ -313,11 +324,16 @@ void EnterByPassword()
       kitu = 0;
       countkitu = 0;
 			kiemtra = 1;
+			uint64_t timestart = HAL_GetTick();
 			while(kiemtra)
 			{
+				uint64_t timefinish = HAL_GetTick();
 				key = read_keypad ();
-				if(key == 'D')
+				if(key == 'D'||timefinish-timestart >= timeout)
+				{
+					key = 'D';
 					break;
+				}
 				while(key == 'A')
 				{
 					HAL_Delay(300); ///////////////////////////////////////////22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
@@ -382,6 +398,7 @@ void EnterByPassword()
 		} 
 		else 
 		{
+			block++;
       LCD_20x4_Clear(); //////////////////////555555555555555555555555555555555555555555555555555555555555555555555555555555555555
 			LCD_20x4_SetCursor(1,1);
       LCD_20x4_Send_String("    Incorrect!",STR_NOSLIDE);
@@ -403,7 +420,10 @@ void EnterByPassword()
 		
 		}
 	
-		
+		if (block == 4)
+		{
+			BlockFunction();
+		}
 		
 		
 		
@@ -572,8 +592,9 @@ void EnterByPassword()
 
 uint8_t readnumber(void)
 {
-	 uint16_t num = 0, count = 0, i = 0;
- 
+	uint16_t num = 0, count = 0, i = 0;
+	LCD_20x4_SetCursor(4,1);
+	LCD_20x4_Send_String("D: Cancel and close!",STR_NOSLIDE);
 	while (num == 0 || count == 0 ) 
 	{
 		key = read_keypad();
@@ -616,3 +637,22 @@ uint8_t readnumber(void)
   return num;
 }
 
+void BlockFunction(void)
+{
+			LCD_20x4_Clear();
+			LCD_20x4_SetCursor(1,1);
+      LCD_20x4_Send_String("Blocked 1 minute! ",STR_NOSLIDE);
+			for(int m = 0;m<100;m++)
+			{
+				HAL_GPIO_TogglePin(LED1_GPIO_Port,LED1_Pin);
+				HAL_Delay(50);
+			}
+			block = 0;
+			LCD_20x4_Clear();
+			LCD_20x4_SetCursor(1,1);
+      LCD_20x4_Send_String("Enter Password",STR_NOSLIDE);
+			LCD_20x4_SetCursor(2,4);
+			LCD_20x4_Send_String("####",STR_NOSLIDE);
+			LCD_20x4_SetCursor(4,1);
+			LCD_20x4_Send_String("D: Back",STR_NOSLIDE);
+}

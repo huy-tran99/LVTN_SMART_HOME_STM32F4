@@ -404,21 +404,29 @@ uint8_t Enroll(void)
 	int p = -1;
 	while (p != FINGERPRINT_OK)
     {
-//		key = read_keypad();///////////////////////////////////
-//		if (key == 'D')//////////////////////////////////
-//		break;/////////////////////////////////////
+		key = read_keypad();///////////////////////////////////
+		if (key == 'D')//////////////////////////////////
+		break;/////////////////////////////////////
 		p = getImage();	
 		HAL_Delay(500);
         switch (p)
         {
             case FINGERPRINT_OK:
             LCD_20x4_Clear();
+						LCD_20x4_SetCursor(3,1);
+						LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
+						LCD_20x4_SetCursor(4,1);
+						LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
             LCD_20x4_SetCursor(1,1);
 						LCD_20x4_Send_String ("Image taken1",STR_NOSLIDE);
 						HAL_Delay(1000);
             break;
             case FINGERPRINT_NOFINGER:
             LCD_20x4_Clear();
+						LCD_20x4_SetCursor(3,1);
+						LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
+						LCD_20x4_SetCursor(4,1);
+						LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
             HAL_Delay(300);
             LCD_20x4_SetCursor(1,1);
 						LCD_20x4_Send_String (".1",STR_NOSLIDE);
@@ -426,18 +434,30 @@ uint8_t Enroll(void)
             break;
             case FINGERPRINT_PACKETRECIEVEERR:
             LCD_20x4_Clear();
+						LCD_20x4_SetCursor(3,1);
+						LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
+						LCD_20x4_SetCursor(4,1);
+						LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
 						LCD_20x4_SetCursor(1,1);
 						LCD_20x4_Send_String ("Communication error",STR_NOSLIDE);
             break;
             case FINGERPRINT_IMAGEFAIL:
             LCD_20x4_Clear();
+						LCD_20x4_SetCursor(3,1);
+						LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
+						LCD_20x4_SetCursor(4,1);
+						LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
             LCD_20x4_SetCursor(1,1);
 						LCD_20x4_Send_String ("Imaging error",STR_NOSLIDE);
             break;
             default:
             LCD_20x4_Clear();
+						LCD_20x4_SetCursor(3,1);
+						LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
+						LCD_20x4_SetCursor(4,1);
+						LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
             LCD_20x4_SetCursor(1,1);
-						LCD_20x4_Send_String ("IUnknown error",STR_NOSLIDE);
+						LCD_20x4_Send_String ("Unknown error",STR_NOSLIDE);
             break;
         }
     }
@@ -471,6 +491,10 @@ switch (p) {
     //Done
 
 LCD_20x4_Clear();
+LCD_20x4_SetCursor(3,1);
+LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
+LCD_20x4_SetCursor(4,1);
+LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
 LCD_20x4_SetCursor(1,1);
 LCD_20x4_Send_String ("Remove finger",STR_NOSLIDE);
 HAL_Delay(500);
@@ -478,9 +502,9 @@ HAL_Delay(500);
 p = -1;
 while (p != FINGERPRINT_NOFINGER)
 {
-//	key = read_keypad();////////////////////////////////////////////////////
-//	if (key == 'D')//////////////////////////////////////////////////
-//	break;//////////////////////////////////////////////////////////
+	key = read_keypad();////////////////////////////////////////////////////
+	if (key == 'D')//////////////////////////////////////////////////
+	break;//////////////////////////////////////////////////////////
     p = getImage();
 		HAL_Delay(500);
 	
@@ -489,21 +513,29 @@ while (p != FINGERPRINT_NOFINGER)
 p = -1;
     while (p != FINGERPRINT_OK) 
     {	
-//			key = read_keypad();//////////////////////////////////////////////////////
-//			if (key == 'D')/////////////////////////////////////////////////////
-//			break;/////////////////////////////////////////////////////////////
+			key = read_keypad();//////////////////////////////////////////////////////
+			if (key == 'D')/////////////////////////////////////////////////////
+			break;/////////////////////////////////////////////////////////////
         p = getImage();
 				HAL_Delay(500);
         switch (p) 
         {
             case FINGERPRINT_OK:
             LCD_20x4_Clear();
+						LCD_20x4_SetCursor(3,1);
+						LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
+						LCD_20x4_SetCursor(4,1);
+						LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
             LCD_20x4_SetCursor(1,1);
             LCD_20x4_Send_String ("Image taken2",STR_NOSLIDE);
 						HAL_Delay(1000);
             break;
             case FINGERPRINT_NOFINGER:
             LCD_20x4_Clear();
+						LCD_20x4_SetCursor(3,1);
+						LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
+						LCD_20x4_SetCursor(4,1);
+						LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
             HAL_Delay(300);
             LCD_20x4_SetCursor(1,1);
             LCD_20x4_Send_String (".2",STR_NOSLIDE);
@@ -511,16 +543,28 @@ p = -1;
             break;
             case FINGERPRINT_PACKETRECIEVEERR:
             LCD_20x4_Clear();
+						LCD_20x4_SetCursor(3,1);
+						LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
+						LCD_20x4_SetCursor(4,1);
+						LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
             LCD_20x4_SetCursor(1,1);
             LCD_20x4_Send_String ("Communication error",STR_NOSLIDE);
             break;
             case FINGERPRINT_IMAGEFAIL:
             LCD_20x4_Clear();
+						LCD_20x4_SetCursor(3,1);
+						LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
+						LCD_20x4_SetCursor(4,1);
+						LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
             LCD_20x4_SetCursor(1,1);
             LCD_20x4_Send_String ("Imaging error",STR_NOSLIDE);
             break;
             default:
             LCD_20x4_Clear();
+						LCD_20x4_SetCursor(3,1);
+						LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
+						LCD_20x4_SetCursor(4,1);
+						LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
             LCD_20x4_SetCursor(1,1);
             LCD_20x4_Send_String ("Unknown error",STR_NOSLIDE);
             break;

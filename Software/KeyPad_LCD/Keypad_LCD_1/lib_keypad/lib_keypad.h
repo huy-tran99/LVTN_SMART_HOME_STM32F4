@@ -8,7 +8,7 @@
 char read_keypad (void);
 void Enter();
 void EnterByPassword(void);
-	void ChangePassword(void);
+void ChangePassword(void);
 uint8_t readnumber(void);
-
+void BlockFunction(void);
 #endif
