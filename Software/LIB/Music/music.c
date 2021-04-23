@@ -28,7 +28,7 @@ uint16_t change(uint16_t data){
 	duty default is 50%
 */
 void music_play(uint16_t index){
-	if ((index < 900) && (index > 300)){
+	if ((index <= 900) && (index >= 300)){
 		htim9.Instance-> ARR = change(index); 
 		htim9.Instance-> CCR1 = (change(index)/2);
 	}

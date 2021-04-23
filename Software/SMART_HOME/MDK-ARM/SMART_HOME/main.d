@@ -35,5 +35,9 @@ smart_home\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
 smart_home\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 smart_home\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 smart_home\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
+smart_home\main.o: ..\..\LIB\LCD16x2\lcd_16x2.h
+smart_home\main.o: ..\..\LIB\LCD20x4\lcd_20x4.h
+smart_home\main.o: ..\..\LIB\Servo\servo.h
+smart_home\main.o: ..\..\LIB\Music\music.h
 smart_home\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 smart_home\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

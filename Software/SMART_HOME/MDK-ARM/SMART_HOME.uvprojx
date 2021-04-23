@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx,USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc; ../Drivers/STM32F4xx_HAL_Driver/Inc; ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy; ../Drivers/CMSIS/Device/ST/STM32F4xx/Include; ../Drivers/CMSIS/Include</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\..\LIB\LCD16x2;..\..\LIB\LCD20x4;..\..\LIB\Servo;..\..\LIB\Music</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -407,6 +407,26 @@
               <FileName>stm32f4xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/stm32f4xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd_16x2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\LIB\LCD16x2\lcd_16x2.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd_20x4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\LIB\LCD20x4\lcd_20x4.c</FilePath>
+            </File>
+            <File>
+              <FileName>Servo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\LIB\Servo\Servo.c</FilePath>
+            </File>
+            <File>
+              <FileName>music.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\LIB\Music\music.c</FilePath>
             </File>
           </Files>
         </Group>

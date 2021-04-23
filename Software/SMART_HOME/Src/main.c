@@ -20,7 +20,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "lcd_16x2.h"	//done
+#include "lcd_20x4.h"	//done
+#include "servo.h"		//done
+#include "music.h"		//done
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
@@ -81,7 +84,7 @@ static void MX_USART6_UART_Init(void);
 /* Code for comunication with esp8266 using UART 1 and UART 6 */
 
 /*	define */
-#define txBuf_size 20
+#define txBuf_size 30
 #define rxBuf_size 10
 
 char txBuf[txBuf_size];
@@ -89,7 +92,45 @@ char rxBuf[rxBuf_size];
 
 char rxBuf_receive[2];
 uint16_t rx_Index = 0;
-char temp_receive[rxBuf_size]; //data temp read from esp 
+char temp_receive[rxBuf_size]; //data temp read from esp
+
+/* Function to work with FAN, LED*/
+#define ON 		1	
+#define OFF 	0
+
+void control_Fan(int dir, int state){
+		if (dir == 1){
+			//control FAN 1 at PC2 
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_2, state);					
+		}
+		if (dir == 2){
+			//control FAN 2 at PC0
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, state);		
+		}
+}
+
+void control_LED(int dir, int state){
+		if (dir == 1){
+			//control LED 1 at PA6 
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, state);					
+		}
+		if (dir == 2){
+			//control LED 2 at PA4
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, state);		
+		}
+		if (dir == 3){
+			//control LED 3 at PA2 
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, state);					
+		}
+		if (dir == 4){
+			//control LED 4 at PA0
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, state);		
+		}
+}
+
+void blink_led(){
+	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);
+}
 
 /* Function to comunication */
 
@@ -106,6 +147,23 @@ void serial_send_cmd(char data[]){
 char* serial_read(){
 	strcpy(temp_receive, rxBuf);
 	return temp_receive;
+}
+
+/* function to check connect wifi */
+int check_wifi(){
+	char temp[2];
+	if (strncmp(serial_read(),"wifi",4)==0){
+		temp[0] = temp_receive[4];
+		if (temp[0] == '0'){
+			return 0; //disconnected
+		}
+		if (temp[0] == '1'){
+			return 1; //connected
+		}
+		if (temp[0] == '2'){
+			return 2; //smartconfig
+		}
+	}
 }
 
 /* Code for comunication with R305 using UART 3*/
@@ -133,6 +191,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 }
 
 /* USER CODE END 0 */
+
+uint8_t i, a; 
+int value = 300;
 
 /**
   * @brief  The application entry point.
@@ -173,31 +234,113 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
+	servo_Init();
+	music_Init();
 	/* Begin receive data from uart 3 and uart 6*/
-	
+	HAL_UART_Receive_IT(&huart6 , (uint8_t*)rxBuf_receive, 1);
+//	LCD_16x2_i2cDeviceCheck();
+//	LCD_16x2_Init();
+//	LCD_16x2_BackLight(LCD_BL_ON);
+//	LCD_16x2_SetCursor(1,1);
+//	LCD_16x2_Send_String("hello",STR_NOSLIDE);
+
+//	LCD_20x4_i2cDeviceCheck();
+//	LCD_20x4_Init();
+//	LCD_20x4_BackLight(LCD_BL_ON);
+//	LCD_20x4_SetCursor(1,1);
+//	LCD_20x4_Send_String("hello",STR_NOSLIDE);
   /* USER CODE END 2 */
-	HAL_UART_Receive_IT(&huart6, (uint8_t*)rxBuf_receive, 1);
-	/* ...................Update..........................*/
-  
-	/* Infinite loop */
+
+  /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	char temp[2];
+	
   while (1)
   {
-    /* USER CODE END WHILE */
-		/* Code to test comunication with esp8266 */
-		char temp[2];
-		if (strncmp(serial_read(),"LED",3)==0){
-			temp[0] = temp_receive[3];
-			if (temp[0] == '1'){
-					serial_send_cmd("LED 1");
-					HAL_Delay(100);
-			}
-			if(temp[0] == '0'){
-					serial_send_cmd("LED 0");
-					HAL_Delay(100);
-			}
+		//check connect to wifi
+		if (check_wifi() == 0){
+			//connect with wifi fail 
+			//blink led red to reconnect
+			control_LED(1, OFF);
 		}
-		/* End code to test comunication with esp8266 */
+		else if (check_wifi() == 2){
+			//smart config begin
+			blink_led();
+			HAL_Delay(100);
+		}
+		else if (check_wifi() == 1){
+			control_LED(1, ON);
+		}
+	
+//		while(value < 900){
+//				music_play(value)
+//				HAL_Delay(500);
+//				value += 20;
+//		}
+//		value = 300;
+//		music_stop();
+//		HAL_Delay(5000);
+		
+		/* play music */
+//		music_play(330);
+//		HAL_Delay(500);
+//		music_play(440);
+//		HAL_Delay(500);
+//		music_play(550);
+//		HAL_Delay(500);
+		
+			/*control servo*/
+//			servo_position(1, 180);
+//			servo_position(2, 180);
+//			servo_position(3, 180);
+//			HAL_Delay(1000);
+//			servo_position(1,0);
+//			servo_position(2, 0);
+//			servo_position(3, 0);
+//			HAL_Delay(1000);
+		
+			/*Turn on LED in 1s and turn off*/
+//			control_LED(1, ON);
+//			control_LED(2, ON);
+//			control_LED(3, ON);
+//			control_LED(4, ON);
+//			HAL_Delay(1000);
+//			control_LED(1, OFF);
+//			control_LED(2, OFF);
+//			control_LED(3, OFF);
+//			control_LED(4, OFF);
+//			HAL_Delay(1000);
+//			HAL_StatusTypeDef result;
+//			for (i=1;i<128;i++){
+//				HAL_Delay(100);
+//				result = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i<<1),2,2);
+//				if (result == HAL_OK)
+//				{
+//					// Received an ACK at that address
+//					a = i;
+//				}
+//		}
+    /* USER CODE END WHILE */
+//		LCD_16x2_SetCursor(1,2);
+//		LCD_16x2_Send_String("HELLO",STR_NOSLIDE);
+//		LCD_16x2_SetCursor(2,2);
+//		LCD_16x2_Send_String("LCD 16x2",STR_NOSLIDE);
+//		HAL_Delay(1000);
+//		LCD_16x2_Clear();
+//			LCD_20x4_SetCursor(1,2);
+//			LCD_20x4_Send_String("HI",STR_NOSLIDE);
+//			LCD_20x4_SetCursor(2,2);
+//			LCD_20x4_Send_String("LCD 20x4",STR_NOSLIDE);
+//			HAL_Delay(1000);
+//			LCD_20x4_Clear();
+
+//		serial_send_cmd("LED 1");
+//		serial_send_cmd("DHT11 12 5");
+//		HAL_Delay(1000);
+//		serial_send_cmd("LED 0");
+//		serial_send_cmd("DHT11 20 10");
+//		HAL_Delay(1000);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -218,13 +361,12 @@ void SystemClock_Config(void)
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 90;
+  RCC_OscInitStruct.PLL.PLLN = 180;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -719,8 +861,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA7 PA13 PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_7|GPIO_PIN_13|GPIO_PIN_15;
+  /*Configure GPIO pins : PA7 PA15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_7|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
