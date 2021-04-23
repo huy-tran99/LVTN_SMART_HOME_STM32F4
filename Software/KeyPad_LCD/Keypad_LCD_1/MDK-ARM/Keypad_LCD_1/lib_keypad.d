@@ -32,6 +32,8 @@ keypad_lcd_1\lib_keypad.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cub
 keypad_lcd_1\lib_keypad.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h
 keypad_lcd_1\lib_keypad.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 keypad_lcd_1\lib_keypad.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
+keypad_lcd_1\lib_keypad.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
+keypad_lcd_1\lib_keypad.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 keypad_lcd_1\lib_keypad.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 keypad_lcd_1\lib_keypad.o: ..\lib_LCD20x4\lcd_20x4.h
 keypad_lcd_1\lib_keypad.o: ..\Finger_lib\finger.h

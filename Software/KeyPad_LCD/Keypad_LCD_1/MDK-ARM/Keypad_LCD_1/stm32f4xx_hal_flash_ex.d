@@ -31,4 +31,6 @@ keypad_lcd_1\stm32f4xx_hal_flash_ex.o: C:/Users/nguyenvanquyet/STM32Cube/Reposit
 keypad_lcd_1\stm32f4xx_hal_flash_ex.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h
 keypad_lcd_1\stm32f4xx_hal_flash_ex.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 keypad_lcd_1\stm32f4xx_hal_flash_ex.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
+keypad_lcd_1\stm32f4xx_hal_flash_ex.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
+keypad_lcd_1\stm32f4xx_hal_flash_ex.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 keypad_lcd_1\stm32f4xx_hal_flash_ex.o: C:/Users/nguyenvanquyet/STM32Cube/Repository/STM32Cube_FW_F4_V1.25.2/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
