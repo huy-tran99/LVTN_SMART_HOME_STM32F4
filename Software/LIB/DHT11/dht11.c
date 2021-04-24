@@ -11,10 +11,11 @@
 
 #include "dht11.h"
 
+DHT11_DATA_TypeDef DATA_DHT11;
+
 static void GPIO_DHT11_OUT(void) ;
 static void GPIO_DHT11_IN(void) ;
 static uint8_t  READ_DATA_8BIT(void) ;
-
 
 /***************************** DHT11 khoi tao***********************/
 void DHT11_Init(void)
@@ -24,7 +25,7 @@ void DHT11_Init(void)
 	//Khoi tao pin DHT11
 	DHT11_DOUT_1 ;
 	//delay
-	HAL_Delay(1000);
+	HAL_Delay(500);
 }
 
 /********************************Config GPIO output***************************/
@@ -32,7 +33,7 @@ static void GPIO_DHT11_OUT(void)
 {
 	GPIO_InitTypeDef GPIO_InitStruct ;
 	
-// cho phep port
+	// cho phep port
 	GPIO_DHT11_CLK;
 	
 	GPIO_InitStruct.Pin = GPIO_DHT11_PIN ; 
@@ -63,7 +64,7 @@ static uint8_t  READ_DATA_8BIT(void)
 		// 50us moi lan gui du lieu
 		while( DHT11_DATA_IN()==0) ;	
 		//thoi gian kiem tra =1 or 0
-		delay_us(80);
+		delay_us(81);
 		//Neu bang 1 thi da truyen di
 		if( DHT11_DATA_IN() == 1 )
 		{
@@ -87,11 +88,11 @@ uint8_t Read_TempAndHumidity (DHT11_DATA_TypeDef *DHT11_DATA)
 	GPIO_DHT11_OUT() ;
 	/*	Cho pin =0	*/
 	DHT11_DOUT_0 ;
-	/*	Delay 18ms	*/
-	HAL_Delay(20) ;
+	/*	Delay > 18ms	*/
+	HAL_Delay(25) ;
 	/*	delay pin len 1 trong 30us	*/
 	DHT11_DOUT_1 ;
-	delay_us(80) ;
+	delay_us(90) ;
 	/*	Chuyen sang che do input	*/
 	GPIO_DHT11_IN() ;
 	//Kiem tra nhan duoc tin hieu tu DHT11 ko , neu ko nhan duoc bao error
@@ -125,50 +126,9 @@ uint8_t Read_TempAndHumidity (DHT11_DATA_TypeDef *DHT11_DATA)
 
 void delay_us(uint8_t time)
 {
-
+	/* Clock 90MHz: (1/90Mhz) * time * 30(nop) = time delay */
     while (time--)
     {
-
-
-        __nop();
-        __nop();
-        __nop();
-
-
-
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-        __nop();
-
         __nop();
         __nop();
         __nop();
@@ -202,22 +162,13 @@ void delay_us(uint8_t time)
         __nop();
         __nop();
     }
-
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void read_DHT11(unsigned char* outStr){
+	if(Read_TempAndHumidity (&DATA_DHT11) == SUCCESS){
+		outStr[0] = DATA_DHT11.humi_int;
+		outStr[1] = DATA_DHT11.humi_deci;
+		outStr[2] = DATA_DHT11.temp_int;
+		outStr[3] = DATA_DHT11.temp_deci;
+	}
+}
