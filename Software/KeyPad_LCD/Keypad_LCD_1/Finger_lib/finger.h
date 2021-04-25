@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define FINGERPRINT_USART huart2
+#define FINGERPRINT_USART huart3
 //#########################################################################################################################
 #define FINGERPRINT_OK          	   0x00 //!< Command execution is complete        
 #define FINGERPRINT_PACKETRECIEVEERR   0x01 //!< Error when receiving data package
@@ -84,6 +84,8 @@ uint8_t search(void);
 uint8_t search_master(void);
 uint8_t empty(void);
 uint8_t deleteModel(uint8_t PageID);
+uint8_t returnFingerID(void);
+
 uint8_t Enroll(void);
 uint8_t FingerPrintFast(void);
 uint8_t getFingerprintID(void);
