@@ -1,4 +1,4 @@
---cpu=Cortex-M4.fp.sp
+--cpu Cortex-M4.fp
 "dht11_discovery\startup_stm32f407xx.o"
 "dht11_discovery\dht11.o"
 "dht11_discovery\main.o"
@@ -23,6 +23,6 @@
 "dht11_discovery\stm32f4xx_hal_exti.o"
 "dht11_discovery\system_stm32f4xx.o"
 --library_type=microlib --strict --scatter "DHT11_discovery\DHT11_discovery.sct"
---summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "DHT11_discovery.map" -o DHT11_discovery\DHT11_discovery.axf

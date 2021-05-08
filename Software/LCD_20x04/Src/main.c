@@ -21,7 +21,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "lcd_i2cModule.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -71,7 +70,6 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
-  
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -105,16 +103,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-		LCD_SetCursor(1,5);
-		LCD_Send_String("hello",STR_NOSLIDE);
-		LCD_SetCursor(2,5);
-		LCD_Send_String("hello",STR_NOSLIDE);
-		LCD_SetCursor(3,5);
-		LCD_Send_String("hello",STR_NOSLIDE);
-		LCD_SetCursor(4,5);
-		LCD_Send_String("hello",STR_NOSLIDE);
-		HAL_Delay(1000);
-		LCD_Clear();
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

@@ -1,0 +1,134 @@
+Removed Pin From Net: NetName=5V Pin=5V-1
+Removed Pin From Net: NetName=5V Pin=C1-1
+Removed Pin From Net: NetName=5V Pin=C3-2
+Removed Pin From Net: NetName=GND Pin=I1'-1
+Removed Pin From Net: NetName=5V Pin=I1'-2
+Removed Pin From Net: NetName=SDA_1 Pin=I1'-3
+Removed Pin From Net: NetName=SCL_1 Pin=I1'-4
+Removed Pin From Net: NetName=PA0 Pin=PA0-1
+Removed Pin From Net: NetName=GND Pin=PA1-1
+Removed Pin From Net: NetName=5V Pin=PA1-2
+Removed Pin From Net: NetName=GND Pin=PA1-3
+Removed Pin From Net: NetName=PA2 Pin=PA2-1
+Removed Pin From Net: NetName=GND Pin=PA3-1
+Removed Pin From Net: NetName=5V Pin=PA3-2
+Removed Pin From Net: NetName=GND Pin=PA3-3
+Removed Pin From Net: NetName=PA4 Pin=PA4-1
+Removed Pin From Net: NetName=GND Pin=PA5-1
+Removed Pin From Net: NetName=5V Pin=PA5-2
+Removed Pin From Net: NetName=PA5 Pin=PA5-4
+Removed Pin From Net: NetName=PA6 Pin=PA6-1
+Removed Pin From Net: NetName=GND Pin=PA7-1
+Removed Pin From Net: NetName=5V Pin=PA7-2
+Removed Pin From Net: NetName=PA7 Pin=PA7-4
+Removed Pin From Net: NetName=GND Pin=PC3-1
+Removed Pin From Net: NetName=5V Pin=PC3-2
+Removed Pin From Net: NetName=GND Pin=PC3-3
+Removed Pin From Net: NetName=GND Pin=R6-2
+Removed Pin From Net: NetName=5V Pin=SW4-3
+Removed Pin From Net: NetName=5V Pin=UART_3-2
+Removed Member From Class: ClassName=Sheet1 Member=I1'
+Added Component: Designator=*(D1A)
+Add component. Clean all parameters for all variants
+Added Component: Designator=I2(CON4)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "Connector 4"; VariantName = "[No Variations]"
+Added Component: Designator=Q4(QTO-92)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = ""; Value = "C9013"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "C9015"; VariantName = "[No Variations]"
+Added Component: Designator=Q5(QTO-92)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = ""; Value = "C9013"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "C9015"; VariantName = "[No Variations]"
+Added Component: Designator=R8(R1/4W)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "R1/4W - 1K"; VariantName = "[No Variations]"
+Added Component: Designator=R10(R1/4W)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "R1/4W - 1K"; VariantName = "[No Variations]"
+Added Component: Designator=R11(R1/4W)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "R1/4W - 1K"; VariantName = "[No Variations]"
+Added Component: Designator=R12(R1/4W)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "R1/4W - 1K"; VariantName = "[No Variations]"
+Added Component: Designator=R13(R1/4W)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "R1/4W - 1K"; VariantName = "[No Variations]"
+Added Component: Designator=R14(R1/4W)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "R1/4W - 1K"; VariantName = "[No Variations]"
+Added Component: Designator=R15(R1/4W)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "R1/4W - 1K"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=*-1
+Added Pin To Net: NetName=GND Pin=5V-2
+Added Pin To Net: NetName=GND Pin=I2-1
+Added Pin To Net: NetName=5V Pin=I2-2
+Added Pin To Net: NetName=SDA_2 Pin=I2-3
+Added Pin To Net: NetName=SCL_2 Pin=I2-4
+Added Pin To Net: NetName=5V Pin=PA1-1
+Added Pin To Net: NetName=GND Pin=PA1-2
+Added Pin To Net: NetName=5V Pin=PA3-1
+Added Pin To Net: NetName=GND Pin=PA3-2
+Added Pin To Net: NetName=5V Pin=PA5-1
+Added Pin To Net: NetName=PA5 Pin=PA5-2
+Added Pin To Net: NetName=5V Pin=PA7-1
+Added Pin To Net: NetName=PA7 Pin=PA7-2
+Added Pin To Net: NetName=GND Pin=PA7-3
+Added Pin To Net: NetName=5V Pin=PC3-1
+Added Pin To Net: NetName=GND Pin=PC3-2
+Added Pin To Net: NetName=5V Pin=Q4-3
+Added Pin To Net: NetName=5V Pin=R6-2
+Added Pin To Net: NetName=GND Pin=R11-1
+Added Pin To Net: NetName=PA2 Pin=R12-1
+Added Pin To Net: NetName=PA0 Pin=R13-1
+Added Pin To Net: NetName=PA6 Pin=R14-1
+Added Pin To Net: NetName=PA4 Pin=R15-1
+Added Pin To Net: NetName=3V3 Pin=UART_3-2
+Added Pin To Net: NetName=Net5V_1 Pin=5V-1
+Added Pin To Net: NetName=Net5V_1 Pin=R6-1
+Added Net: Name=Net5V_1
+Added Pin To Net: NetName=Net*_2 Pin=*-2
+Added Pin To Net: NetName=Net*_2 Pin=R8-2
+Added Pin To Net: NetName=Net*_2 Pin=R10-2
+Added Net: Name=Net*_2
+Added Pin To Net: NetName=NetC1_1 Pin=C1-1
+Added Pin To Net: NetName=NetC1_1 Pin=C3-2
+Added Pin To Net: NetName=NetC1_1 Pin=Q4-1
+Added Pin To Net: NetName=NetC1_1 Pin=Q5-1
+Added Pin To Net: NetName=NetC1_1 Pin=R8-1
+Added Pin To Net: NetName=NetC1_1 Pin=SW4-3
+Added Net: Name=NetC1_1
+Added Pin To Net: NetName=NetPA0_1 Pin=PA0-1
+Added Pin To Net: NetName=NetPA0_1 Pin=R13-2
+Added Net: Name=NetPA0_1
+Added Pin To Net: NetName=NetPA2_1 Pin=PA2-1
+Added Pin To Net: NetName=NetPA2_1 Pin=R12-2
+Added Net: Name=NetPA2_1
+Added Pin To Net: NetName=NetPA4_1 Pin=PA4-1
+Added Pin To Net: NetName=NetPA4_1 Pin=R15-2
+Added Net: Name=NetPA4_1
+Added Pin To Net: NetName=NetPA6_1 Pin=PA6-1
+Added Pin To Net: NetName=NetPA6_1 Pin=R14-2
+Added Net: Name=NetPA6_1
+Added Pin To Net: NetName=NetQ4_2 Pin=Q4-2
+Added Pin To Net: NetName=NetQ4_2 Pin=Q5-3
+Added Pin To Net: NetName=NetQ4_2 Pin=R11-2
+Added Net: Name=NetQ4_2
+Added Pin To Net: NetName=NetQ5_2 Pin=Q5-2
+Added Pin To Net: NetName=NetQ5_2 Pin=R10-1
+Added Net: Name=NetQ5_2
+Added Member To Class: ClassName=Sheet1 Member=Component * Zener
+Added Member To Class: ClassName=Sheet1 Member=Component I2 
+Added Member To Class: ClassName=Sheet1 Member=Component Q4 C9015
+Added Member To Class: ClassName=Sheet1 Member=Component Q5 C9015
+Added Member To Class: ClassName=Sheet1 Member=Component R8 2k
+Added Member To Class: ClassName=Sheet1 Member=Component R10 1k
+Added Member To Class: ClassName=Sheet1 Member=Component R11 1k
+Added Member To Class: ClassName=Sheet1 Member=Component R12 220
+Added Member To Class: ClassName=Sheet1 Member=Component R13 220
+Added Member To Class: ClassName=Sheet1 Member=Component R14 220
+Added Member To Class: ClassName=Sheet1 Member=Component R15 220
+Added Room: Name=Sheet1

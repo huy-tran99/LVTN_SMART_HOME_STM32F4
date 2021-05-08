@@ -18,13 +18,13 @@ SoftwareSerial esp;
 /* Bat dau chuong trinh, esp se doc ten va mat khau duoc luu trong ROM */
 /* ESP se co ket noi toi wifi do, neu ket noi thanh cong thi thuc hien chuong trinh */
 /* Neu ket noi khong thanh cong, esp se vao che do STATION va cho nguoi dung nhap ten va mat khau */
-const char *ssid = "HOST_STM32F4";
+const char *ssid = "ESP8266_SMARTHOME";
 const char *password = "123456789";
 
 ESP8266WebServer sv(80); //Khoi tao server ở port 80
 
-#define FIREBASE_HOST "smarthome-41011-default-rtdb.firebaseio.com"
-#define FIREBASE_AUTH "zO7fQEf2DdJ28nS3NXi5JjwXgM03RBHOR9tOKy4r"   //Không dùng xác thực nên không đổi
+#define FIREBASE_HOST "thesis-720fc-default-rtdb.firebaseio.com"
+#define FIREBASE_AUTH "9mLBvhsu6h2aC1EnPOBET28cnUvKKg7eWLSrhcG1"   //Không dùng xác thực nên không đổi
 
 /* Cac bien can thiet*/
 String s0 = "\n";
@@ -95,6 +95,7 @@ void setup() {
   }
   /* add cmd to call */
   CMD.addCommand("LED", LED);
+  CMD.addCommand("RAIN", RAIN);
   CMD.addCommand("DHT11", DHT11);
   CMD.addCommand("PIR", PIR);
   CMD.addCommand("LIGHT", light_sensor);

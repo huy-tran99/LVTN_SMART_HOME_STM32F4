@@ -866,14 +866,14 @@ ARM Macro Assembler    Page 14
   436 0000001C                 END
               00000000 
               00000000 
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp.sp --apcs=
-interwork --depend=lcd_20x04\startup_stm32f407xx.d -olcd_20x04\startup_stm32f40
-7xx.o -I.\RTE\_LCD_20x04 -IC:\Users\Dell\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.
-0\CMSIS\Core\Include -IC:\Users\Dell\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP
-\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine="__EVAL SETA 1" -
--predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 531" --prede
-fine="_RTE_ SETA 1" --predefine="STM32F407xx SETA 1" --predefine="_RTE_ SETA 1"
- --list=startup_stm32f407xx.lst startup_stm32f407xx.s
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=lcd_20x04\startup_stm32f407xx.d -olcd_20x04\startup_stm32f407xx
+.o -IC:\Users\hieu2\OneDrive\Desktop\TEST\LVTN_SMART_HOME_STM32F4\Software\LCD_
+20x04\MDK-ARM\RTE -IC:\Users\hieu2\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSI
+S\Core\Include -IC:\Users\hieu2\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.15
+.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine="__MICROLIB SETA 1" --
+predefine="__UVISION_VERSION SETA 517" --predefine="_RTE_ SETA 1" --predefine="
+STM32F407xx SETA 1" --list=startup_stm32f407xx.lst startup_stm32f407xx.s
 
 
 
@@ -1958,4 +1958,4 @@ Symbol: __main
       At line 190 in file startup_stm32f407xx.s
 Comment: __main used once
 2 symbols
-446 symbols in table
+445 symbols in table

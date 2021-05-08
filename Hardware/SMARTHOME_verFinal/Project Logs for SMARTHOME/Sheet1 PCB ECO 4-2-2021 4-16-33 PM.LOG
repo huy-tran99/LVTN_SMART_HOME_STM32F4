@@ -1,0 +1,17 @@
+Change Component Designator: OldDesignator=E8 NewDesignator=PE8
+Change Component Designator: OldDesignator=E10 NewDesignator=PE10
+Change Component Designator: OldDesignator=E12 NewDesignator=PE12
+Change Component Designator: OldDesignator=E14 NewDesignator=PE14
+Added Pin To Net: NetName=PE8 Pin=1-38
+Added Pin To Net: NetName=PE8 Pin=PE8-3
+Added Net: Name=PE8
+Added Pin To Net: NetName=PE10 Pin=1-39
+Added Pin To Net: NetName=PE10 Pin=PE10-3
+Added Net: Name=PE10
+Added Pin To Net: NetName=PE12 Pin=1-40
+Added Pin To Net: NetName=PE12 Pin=PE12-3
+Added Net: Name=PE12
+Added Pin To Net: NetName=PE14 Pin=1-41
+Added Pin To Net: NetName=PE14 Pin=PE14-3
+Added Net: Name=PE14
+Added Room: Name=Sheet1

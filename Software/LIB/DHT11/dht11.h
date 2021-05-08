@@ -16,7 +16,7 @@ typedef struct
 /********************************* DHT11 Define port connect ********************************/
 #define			GPIO_DHT11_CLK			__HAL_RCC_GPIOA_CLK_ENABLE();
 #define			GPIO_DHT11_PORT			GPIOA						
-#define			GPIO_DHT11_PIN			GPIO_PIN_1 
+#define			GPIO_DHT11_PIN			GPIO_PIN_7
 
 /********************************* DHT11 define huong vao ra**************************************/
 #define			DHT11_DOUT_0			HAL_GPIO_WritePin( GPIO_DHT11_PORT , GPIO_DHT11_PIN,0)

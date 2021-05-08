@@ -866,14 +866,15 @@ ARM Macro Assembler    Page 14
   436 0000001C                 END
               00000000 
               00000000 
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp.sp --apcs=
-interwork --depend=dht11_discovery\startup_stm32f407xx.d -odht11_discovery\star
-tup_stm32f407xx.o -I.\RTE\_DHT11_discovery -IC:\Users\Dell\AppData\Local\Arm\Pa
-cks\ARM\CMSIS\5.7.0\CMSIS\Core\Include -IC:\Users\Dell\AppData\Local\Arm\Packs\
-Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine
-="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION
- SETA 531" --predefine="_RTE_ SETA 1" --predefine="STM32F407xx SETA 1" --predef
-ine="_RTE_ SETA 1" --list=startup_stm32f407xx.lst startup_stm32f407xx.s
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=dht11_discovery\startup_stm32f407xx.d -odht11_discovery\startup
+_stm32f407xx.o -IC:\Users\hieu2\OneDrive\Desktop\TEST\LVTN_SMART_HOME_STM32F4\S
+oftware\DHT11_discovery\MDK-ARM\RTE -IC:\Users\hieu2\AppData\Local\Arm\Packs\AR
+M\CMSIS\5.7.0\CMSIS\Core\Include -IC:\Users\hieu2\AppData\Local\Arm\Packs\Keil\
+STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --predefine="__M
+ICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 517" --predefine="_RTE_ SET
+A 1" --predefine="STM32F407xx SETA 1" --list=startup_stm32f407xx.lst startup_st
+m32f407xx.s
 
 
 
@@ -1958,4 +1959,4 @@ Symbol: __main
       At line 190 in file startup_stm32f407xx.s
 Comment: __main used once
 2 symbols
-446 symbols in table
+445 symbols in table

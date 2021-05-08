@@ -244,11 +244,11 @@ int main(void)
 //	LCD_16x2_SetCursor(1,1);
 //	LCD_16x2_Send_String("hello",STR_NOSLIDE);
 
-//	LCD_20x4_i2cDeviceCheck();
-//	LCD_20x4_Init();
-//	LCD_20x4_BackLight(LCD_BL_ON);
-//	LCD_20x4_SetCursor(1,1);
-//	LCD_20x4_Send_String("hello",STR_NOSLIDE);
+	LCD_20x4_i2cDeviceCheck();
+	LCD_20x4_Init();
+	LCD_20x4_BackLight(LCD_BL_ON);
+	LCD_20x4_SetCursor(1,1);
+	LCD_20x4_Send_String("hello",STR_NOSLIDE);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -257,20 +257,20 @@ int main(void)
 	
   while (1)
   {
-		//check connect to wifi
-		if (check_wifi() == 0){
-			//connect with wifi fail 
-			//blink led red to reconnect
-			control_LED(1, OFF);
-		}
-		else if (check_wifi() == 2){
-			//smart config begin
-			blink_led();
-			HAL_Delay(100);
-		}
-		else if (check_wifi() == 1){
-			control_LED(1, ON);
-		}
+//		//check connect to wifi
+//		if (check_wifi() == 0){
+//			//connect with wifi fail 
+//			//blink led red to reconnect
+//			control_LED(1, OFF);
+//		}
+//		else if (check_wifi() == 2){
+//			//smart config begin
+//			blink_led();
+//			HAL_Delay(100);
+//		}
+//		else if (check_wifi() == 1){
+//			control_LED(1, ON);
+//		}
 	
 //		while(value < 900){
 //				music_play(value)
@@ -282,12 +282,12 @@ int main(void)
 //		HAL_Delay(5000);
 		
 		/* play music */
-//		music_play(330);
-//		HAL_Delay(500);
-//		music_play(440);
-//		HAL_Delay(500);
-//		music_play(550);
-//		HAL_Delay(500);
+		music_play(330);
+		HAL_Delay(500);
+		music_play(440);
+		HAL_Delay(500);
+		music_play(550);
+		HAL_Delay(500);
 		
 			/*control servo*/
 //			servo_position(1, 180);

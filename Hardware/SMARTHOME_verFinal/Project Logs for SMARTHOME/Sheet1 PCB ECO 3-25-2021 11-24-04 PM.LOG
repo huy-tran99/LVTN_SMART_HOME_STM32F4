@@ -1,0 +1,4 @@
+Change Component Designator: OldDesignator=PD15 NewDesignator=PC5
+Change Component Designator: OldDesignator=PE9 NewDesignator=PA3
+Change Component Designator: OldDesignator=PE13 NewDesignator=PA5
+Added Room: Name=Sheet1

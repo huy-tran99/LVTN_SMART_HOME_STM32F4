@@ -1,4 +1,4 @@
---cpu=Cortex-M4.fp.sp
+--cpu Cortex-M4.fp
 "smart_home\startup_stm32f407xx.o"
 "smart_home\main.o"
 "smart_home\stm32f4xx_it.o"
@@ -29,6 +29,6 @@
 "smart_home\stm32f4xx_hal_exti.o"
 "smart_home\system_stm32f4xx.o"
 --library_type=microlib --strict --scatter "SMART_HOME\SMART_HOME.sct"
---summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "SMART_HOME.map" -o SMART_HOME\SMART_HOME.axf

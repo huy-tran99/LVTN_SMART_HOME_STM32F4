@@ -31,3 +31,4 @@ dht11_discovery\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex
 dht11_discovery\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 dht11_discovery\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
 dht11_discovery\main.o: ..\..\LIB\DHT11\dht11.h
+dht11_discovery\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
