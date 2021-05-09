@@ -5,6 +5,7 @@
 
 /********************************* Function ********************************/
 void music_Init(void);
+uint16_t change(uint16_t data);
 void music_play(uint16_t index);
 void music_stop(void);
 

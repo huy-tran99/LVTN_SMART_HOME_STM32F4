@@ -3,12 +3,15 @@
 #include "stm32f4xx_hal.h"
 #include "lcd_20x4.h"
 
-#define MOCUA HAL_GPIO_WritePin(LED2_GPIO_Port,LED2_Pin,GPIO_PIN_RESET);
+#define MOCUA HAL_GPIO_WritePin(LED2_GPIO_Port,LED2_Pin,GPIO_PIN_RESET);		
 #define DONGCUA HAL_GPIO_WritePin(LED2_GPIO_Port,LED2_Pin,GPIO_PIN_SET);
+ 
+#define Toggle HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_2); 
+
 char read_keypad (void);
 void Enter();
 void EnterByPassword(void);
-	void ChangePassword(void);
+void ChangePassword(void);
 uint8_t readnumber(void);
-
+void BlockFunction(void);
 #endif

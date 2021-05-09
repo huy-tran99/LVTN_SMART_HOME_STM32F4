@@ -1,5 +1,6 @@
 /*Includes---------------------------------------------------------*/
 #include "lcd_16x2.h"
+#include "lcd_20x4.h"
 #include "lcd_16x2_config.h"
 #include <stdio.h>
 #include <string.h>

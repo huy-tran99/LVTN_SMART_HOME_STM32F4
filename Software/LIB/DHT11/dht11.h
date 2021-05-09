@@ -24,8 +24,12 @@ typedef struct
 #define 		DHT11_DATA_IN()		HAL_GPIO_ReadPin( GPIO_DHT11_PORT , GPIO_DHT11_PIN) 
 
 /*********************************KHAI BAO HAM CON *************************************/
-void DHT11_Init(void) ;
+void DHT11_Init(void) ;  //add to main
 void delay_us(uint8_t time);
 uint8_t Read_TempAndHumidity (DHT11_DATA_TypeDef *DHT11_DATA) ;
-
+void read_DHT11(unsigned char* outStr); 
+/*EX: 
+	DHT11[4];
+	read_DHT11(DHT11);
+*/
 #endif 						
