@@ -1,0 +1,12 @@
+Removed Pin From Net: NetName=GND Pin=I2-1
+Removed Pin From Net: NetName=3V3 Pin=I2-2
+Removed Pin From Net: NetName=SDA_2 Pin=I2-3
+Removed Pin From Net: NetName=SCL_2 Pin=I2-4
+Removed Pin From Net: NetName=GND Pin=I3-1
+Removed Pin From Net: NetName=3V3 Pin=I3-2
+Removed Pin From Net: NetName=SDA_3 Pin=I3-3
+Removed Pin From Net: NetName=SCL_3 Pin=I3-4
+Removed Member From Class: ClassName=Sheet1 Member=I2
+Removed Member From Class: ClassName=Sheet1 Member=I3
+Change Component Designator: OldDesignator=UART_1 NewDesignator=UART_3
+Added Room: Name=Sheet1

@@ -1,0 +1,27 @@
+Removed Pin From Net: NetName=GND Pin=PA7-1
+Removed Pin From Net: NetName=3V3 Pin=PA7-2
+Removed Pin From Net: NetName=PA7 Pin=PA7-4
+Removed Pin From Net: NetName=GND Pin=PB1-1
+Removed Pin From Net: NetName=3V3 Pin=PB1-2
+Removed Pin From Net: NetName=PB1 Pin=PB1-4
+Removed Pin From Net: NetName=PE8 Pin=PE8-3
+Removed Pin From Net: NetName=PE10 Pin=PE10-3
+Removed Pin From Net: NetName=PE12 Pin=PE12-3
+Removed Pin From Net: NetName=PE14 Pin=PE14-3
+Removed Member From Class: ClassName=Sheet1 Member=PA7
+Removed Member From Class: ClassName=Sheet1 Member=PE8
+Change Component Designator: OldDesignator=PE8 NewDesignator=PB1
+Change Component Designator: OldDesignator=PE10 NewDesignator=PE9
+Change Component Designator: OldDesignator=PE12 NewDesignator=PE11
+Change Component Designator: OldDesignator=PE14 NewDesignator=PE13
+Added Pin To Net: NetName=PB1 Pin=PB1-3
+Added Pin To Net: NetName=PE9 Pin=1-14
+Added Pin To Net: NetName=PE9 Pin=PE9-3
+Added Net: Name=PE9
+Added Pin To Net: NetName=PE11 Pin=1-15
+Added Pin To Net: NetName=PE11 Pin=PE11-3
+Added Net: Name=PE11
+Added Pin To Net: NetName=PE13 Pin=1-16
+Added Pin To Net: NetName=PE13 Pin=PE13-3
+Added Net: Name=PE13
+Added Room: Name=Sheet1

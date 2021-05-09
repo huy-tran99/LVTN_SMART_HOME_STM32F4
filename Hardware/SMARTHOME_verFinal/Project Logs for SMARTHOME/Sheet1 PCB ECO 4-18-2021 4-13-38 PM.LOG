@@ -1,0 +1,17 @@
+Removed Pin From Net: NetName=K_A Pin=*1-89
+Removed Pin From Net: NetName=K_B Pin=*1-90
+Removed Pin From Net: NetName=K_C Pin=*1-91
+Removed Pin From Net: NetName=K_D Pin=*1-92
+Removed Pin From Net: NetName=K_1 Pin=*1-93
+Removed Pin From Net: NetName=K_2 Pin=*1-94
+Removed Pin From Net: NetName=K_3 Pin=*1-95
+Removed Pin From Net: NetName=K_4 Pin=*1-96
+Added Pin To Net: NetName=K_A Pin=*1-88
+Added Pin To Net: NetName=K_B Pin=*1-89
+Added Pin To Net: NetName=K_C Pin=*1-90
+Added Pin To Net: NetName=K_D Pin=*1-91
+Added Pin To Net: NetName=K_1 Pin=*1-92
+Added Pin To Net: NetName=K_2 Pin=*1-93
+Added Pin To Net: NetName=K_3 Pin=*1-94
+Added Pin To Net: NetName=K_4 Pin=*1-95
+Added Room: Name=Sheet1

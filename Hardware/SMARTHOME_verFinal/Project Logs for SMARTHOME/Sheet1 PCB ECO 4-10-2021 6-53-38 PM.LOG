@@ -1,0 +1,9 @@
+Added Component: Designator=I1'(CON4)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "Connector 4"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=I1'-1
+Added Pin To Net: NetName=5V Pin=I1'-2
+Added Pin To Net: NetName=SDA_1 Pin=I1'-3
+Added Pin To Net: NetName=SCL_1 Pin=I1'-4
+Added Member To Class: ClassName=Sheet1 Member=Component I1' 
+Added Room: Name=Sheet1
