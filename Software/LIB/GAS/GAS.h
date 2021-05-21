@@ -6,5 +6,8 @@
 /********************************* GAS Define port connect ********************************/
 #define 	GAS_ADC 	hadc1
 
-uint8_t read_GAS(uint16_t Thresh);
+uint16_t read_GAS(void);
+void convert_ppm(void);
+
 #endif 	
+ 

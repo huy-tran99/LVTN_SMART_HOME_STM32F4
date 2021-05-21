@@ -72,8 +72,17 @@ void Finger_printTask(void const * argument);
 void Uart_readTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
+/* Data read DHT11 */
+unsigned char data_read_dht11[4];
+
+/* Data old */
+unsigned char data_old_dht11[4];
+uint16_t gas_data_old = 0;
+uint8_t pir_data_old = 0;
+uint8_t rain_data_old = 0;
+uint8_t light_data_old = 0;
+
 /* Data before read sensor, wait to send */
-unsigned char data[4];
 char data_send_DHT11[17];
 char data_send_GAS[14];
 char data_send_PIR[7];
@@ -83,17 +92,32 @@ char data_send_Light_sensor[9];
 /* Data before update status */
 char data_send_LED1[8];
 char data_send_LED2[8];
+char data_send_LED3[8];
+char data_send_LED4[8];
 char data_send_SECURITY[12];
 char data_send_RELAY[9];
-char data_send_FAN[7];
+char data_send_FAN1[8];
+char data_send_FAN2[8];
 char data_send_ERASE[9]; //to erase flash EEPROM
 
 //state will change, using to control device
-int FAN_state = 0;
+int FAN1_state = 0;
+int FAN2_state = 0;
 int RELAY_state = 0;
 int LED1_state = 0;
 int LED2_state = 0;
+int LED3_state = 0;
+int LED4_state = 0;
 int DOOR_state = 0;
+
+int FAN1_old_state = 0;
+int FAN2_old_state = 0;
+int RELAY_old_state = 0;
+int LED1_old_state = 0;
+int LED2_old_state = 0;
+int LED3_old_state = 0;
+int LED4_old_state = 0;
+int DOOR_old_state = 0;
 
 
 /* USER CODE END PFP */
@@ -194,41 +218,69 @@ int check_wifi(){
 
 /* Function to read sensor */
 void readSensor(){
-		read_DHT11(data);
-		sprintf(data_send_DHT11, "DHT11 %d.%d %d.%d\r\n" ,data[2],data[3],data[0],data[1]);
-		HAL_Delay(100);
+		read_DHT11(data_read_dht11);
+		if ((data_old_dht11[0] != data_read_dht11[0])||(data_old_dht11[2] != data_read_dht11[2])||(data_old_dht11[1] != data_read_dht11[1])||(data_old_dht11[3] != data_read_dht11[3])){
+			memcpy(data_old_dht11, data_read_dht11, 4);
+			//meaning data change 
+			sprintf(data_send_DHT11, "DHT11 %d.%d %d.%d\r\n" ,data_old_dht11[2],data_old_dht11[3],data_old_dht11[0],data_old_dht11[1]);
+			serial_write(data_send_DHT11, strlen(data_send_DHT11));
+			HAL_Delay(500);
+		}
 		/* To test, maybe use state to control device, update before */
-		sprintf(data_send_PIR, "PIR %d\r\n" ,read_PIR());
-		sprintf(data_send_GAS, "GAS %d\r\n" ,read_GAS());
-		sprintf(data_send_Light_sensor, "LIGHT %d\r\n" ,read_Light_sensor());
-		sprintf(data_send_RAIN, "RAIN %d\r\n" ,read_Rain(1000));
-		HAL_Delay(100);
+//		if (pir_data_old != read_PIR()){
+//			pir_data_old = read_PIR();
+//			sprintf(data_send_PIR, "PIR %d\r\n" ,pir_data_old);
+//			serial_write(data_send_PIR, strlen(data_send_PIR));
+//			HAL_Delay(200);
+//		}
+//		if (rain_data_old != read_Rain(1000)){
+//			rain_data_old = read_Rain(1000);
+//			sprintf(data_send_RAIN, "RAIN %d\r\n" ,rain_data_old);
+//			serial_write(data_send_RAIN, strlen(data_send_PIR));
+//			HAL_Delay(200);
+//		}
+//		if (light_data_old != read_Light_sensor()){
+//			light_data_old = read_Light_sensor();
+//			sprintf(data_send_Light_sensor, "LIGHT %d\r\n" ,light_data_old);
+//			serial_write(data_send_Light_sensor, strlen(data_send_Light_sensor));
+//			HAL_Delay(200);
+//		}
+		
+		uint16_t c = 0; //do thay doi cua cam bien gas
+		c = (gas_data_old > read_GAS()) ? gas_data_old - read_GAS(): read_GAS() - gas_data_old;
+		if (c > 0){
+			gas_data_old = read_GAS();
+			sprintf(data_send_GAS, "GAS %d\r\n" ,gas_data_old);
+			serial_write(data_send_GAS, strlen(data_send_GAS));
+			HAL_Delay(500);
+		}	
 }
 
 void sendSensor(){
-		serial_write(data_send_DHT11, strlen(data_send_DHT11));
-		HAL_Delay(500);
-		serial_write(data_send_PIR, strlen(data_send_PIR));
-		HAL_Delay(500);
-		serial_write(data_send_GAS, strlen(data_send_GAS));
-		HAL_Delay(500);
-		serial_write(data_send_Light_sensor, strlen(data_send_Light_sensor));
-		HAL_Delay(500);
-		serial_write(data_send_RAIN, strlen(data_send_RAIN));
-		HAL_Delay(500);
+		//Nothing hear
+		HAL_Delay(10);
 }
 
 /* stream Firebase */
 void stream(){
 	char temp[2];
 	//stream FAN state
-	if (strncmp(serial_read(),"FAN",3)==0){
-		temp[0] = temp_receive[3];
+	if (strncmp(serial_read(),"FAN1",4)==0){
+		temp[0] = temp_receive[4];
 		if (temp[0] == '0'){
-			FAN_state = 0;
+			FAN1_state = 0;
 		}
 		if (temp[0] == '1'){
-			FAN_state = 1;
+			FAN1_state = 1;
+		}
+	}
+	if (strncmp(serial_read(),"FAN2",4)==0){
+		temp[0] = temp_receive[4];
+		if (temp[0] == '0'){
+			FAN2_state = 0;
+		}
+		if (temp[0] == '1'){
+			FAN2_state = 1;
 		}
 	}
 	//stream RELAY state
@@ -261,6 +313,26 @@ void stream(){
 			LED2_state = 1;
 		}
 	}	
+	//stream lED3 state
+	if (strncmp(serial_read(),"LED3",4)==0){
+		temp[0] = temp_receive[4];
+		if (temp[0] == '0'){
+			LED3_state = 0;
+		}
+		if (temp[0] == '1'){
+			LED3_state = 1;
+		}
+	}	
+	//stream LED4 state
+	if (strncmp(serial_read(),"LED4",4)==0){
+		temp[0] = temp_receive[4];
+		if (temp[0] == '0'){
+			LED4_state = 0;
+		}
+		if (temp[0] == '1'){
+			LED4_state = 1;
+		}
+	}	
 	//stream DOOR state
 	if (strncmp(serial_read(),"DOOR",4)==0){
 		temp[0] = temp_receive[4];
@@ -275,35 +347,67 @@ void stream(){
 
 
 void send_stream(){
-		sprintf(data_send_LED1, "LED1 %d\r\n" ,LED1_state);
+	if (LED1_state != LED1_old_state){
+		LED1_old_state = LED1_state;
+		sprintf(data_send_LED1, "LED1 %d\r\n" ,LED1_old_state);
 		serial_write(data_send_LED1, strlen(data_send_LED1));
 		HAL_Delay(200);
-	
-		sprintf(data_send_LED2, "LED2 %d\r\n" ,LED2_state);
+	}
+	if (LED2_state != LED2_old_state){
+		LED2_old_state = LED2_state;
+		sprintf(data_send_LED2, "LED2 %d\r\n" ,LED2_old_state);
 		serial_write(data_send_LED2, strlen(data_send_LED2));
 		HAL_Delay(200);
+	}
 	
-		sprintf(data_send_RELAY, "RELAY %d\r\n" ,RELAY_state);
+	if (LED3_state != LED3_old_state){
+		LED3_old_state = LED3_state;
+		sprintf(data_send_LED3, "LED3 %d\r\n" ,LED3_old_state);
+		serial_write(data_send_LED3, strlen(data_send_LED3));
+		HAL_Delay(200);
+	}
+	if (LED4_state != LED4_old_state){
+		LED4_old_state = LED4_state;
+		sprintf(data_send_LED4, "LED4 %d\r\n" ,LED4_old_state);
+		serial_write(data_send_LED4, strlen(data_send_LED4));
+		HAL_Delay(200);
+	}
+	if (RELAY_state != RELAY_old_state){
+		RELAY_old_state = RELAY_state;
+		sprintf(data_send_RELAY, "RELAY %d\r\n" ,RELAY_old_state);
 		serial_write(data_send_RELAY, strlen(data_send_RELAY));
 		HAL_Delay(200);
-		
-		sprintf(data_send_FAN, "FAN %d\r\n" ,FAN_state);
-		serial_write(data_send_FAN, strlen(data_send_FAN));
+	}
+	if (FAN1_state != FAN1_old_state){
+		FAN1_old_state = FAN1_state;
+		sprintf(data_send_FAN1, "FAN1 %d\r\n" ,FAN1_old_state);
+		serial_write(data_send_FAN1, strlen(data_send_FAN1));
 		HAL_Delay(200);
-			
-		sprintf(data_send_SECURITY, "SECURITY %d\r\n" ,DOOR_state);
-		serial_write(data_send_FAN, strlen(data_send_FAN));
+	}
+	if (FAN2_state != FAN2_old_state){
+		FAN2_old_state = FAN2_state;
+		sprintf(data_send_FAN2, "FAN2 %d\r\n" ,FAN2_old_state);
+		serial_write(data_send_FAN2, strlen(data_send_FAN2));
 		HAL_Delay(200);
+	}
+	if (DOOR_state != DOOR_old_state){
+		DOOR_old_state = DOOR_state;
+		sprintf(data_send_SECURITY, "SECURITY %d\r\n" ,DOOR_old_state);
+		serial_write(data_send_SECURITY, strlen(data_send_SECURITY));
+		HAL_Delay(200);
+	}
 }
 
 
 
 /* Final control all :LED, FAN, DOOR, RELAY, .....*/
 void control_HOME(){
-	control_Fan(1, FAN_state);
-	control_LED(2, LED2_state); //Tam thoi chua su dung LED1
-	control_DOOR(DOOR_state);
-	control_RELAY(RELAY_state);
+	//control_Fan(1, FAN_old_state);
+	control_LED(2, LED2_old_state); //Tam thoi chua su dung LED1
+	control_LED(3, LED3_old_state);
+	control_LED(4, LED4_old_state);
+	//control_DOOR(DOOR_old_state);
+	//control_RELAY(RELAY_old_state);
 }
 
 /* Code for comunication with R305 using UART 3*/
@@ -1005,8 +1109,9 @@ void Read_sensorTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		readSensor();
+		//readSensor();
 		stream();
+		send_stream();
 		control_HOME();
     osDelay(100);
   }
@@ -1026,7 +1131,7 @@ void Finger_printTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		Enter();
+		//Enter();
     osDelay(100);
   }
   /* USER CODE END Finger_printTask */
@@ -1057,14 +1162,13 @@ void Uart_readTask(void const * argument)
 		}
 		else if (check_wifi() == 1){
 			control_LED(1, ON);
-			serial_write(data_send_GAS, strlen(data_send_GAS));
-			HAL_Delay(200);
-			serial_write(data_send_DHT11, strlen(data_send_DHT11));
-			HAL_Delay(200);
+			//serial_write(data_send_GAS, strlen(data_send_GAS));
+			//HAL_Delay(200);
+			//serial_write(data_send_DHT11, strlen(data_send_DHT11));
+			//HAL_Delay(200);
 			//sendSensor();
 			//send_stream();
-		}
-					
+		}				
 		osDelay(100);
   }
   /* USER CODE END Uart_readTask */

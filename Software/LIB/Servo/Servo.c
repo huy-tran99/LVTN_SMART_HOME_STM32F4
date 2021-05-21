@@ -1,6 +1,4 @@
 #include "Servo.h"
-#include "math.h"
-
 /*
 	HCLK = 90Mhz
 	APB1 and APB2: 45Mhz

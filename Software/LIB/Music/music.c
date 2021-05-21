@@ -1,5 +1,4 @@
 #include "music.h"
-#include "math.h"
 
 /*
 	HCLK = 90Mhz
