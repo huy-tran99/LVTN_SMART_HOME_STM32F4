@@ -17,6 +17,7 @@
 "lvtn_final_v1\stm32f4xx_it.o"
 "lvtn_final_v1\stm32f4xx_hal_msp.o"
 "lvtn_final_v1\stm32f4xx_hal_timebase_tim.o"
+"lvtn_final_v1\lib_ta12.o"
 "lvtn_final_v1\stm32f4xx_hal_adc.o"
 "lvtn_final_v1\stm32f4xx_hal_adc_ex.o"
 "lvtn_final_v1\stm32f4xx_hal_i2c.o"

@@ -12,7 +12,7 @@ uint16_t read_GAS(void){
 	gas_value = HAL_ADC_GetValue(&GAS_ADC);
 	HAL_ADC_Stop (&GAS_ADC);
 	convert_ppm();
-	return (uint16_t)gas_value;
+	return (uint16_t)ppm_value;
 }
 
 void convert_ppm(void){

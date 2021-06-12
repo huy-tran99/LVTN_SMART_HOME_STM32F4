@@ -62,4 +62,6 @@ lvtn_final_v1\main.o: ..\..\LIB\RAIN\Rain.h
 lvtn_final_v1\main.o: ..\..\LIB\Servo\Servo.h
 lvtn_final_v1\main.o: ..\..\LIB\Finger_print\finger.h
 lvtn_final_v1\main.o: ..\..\LIB\Key_PAD\lib_keypad.h
+lvtn_final_v1\main.o: ..\..\LIB\TA12\lib_TA12.h
+lvtn_final_v1\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 lvtn_final_v1\main.o: ..\..\LIB\Control_device\Control_device.h

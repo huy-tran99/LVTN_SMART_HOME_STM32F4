@@ -37,6 +37,7 @@
 #include "Servo.h"
 #include "finger.h"
 #include "lib_keypad.h"
+#include "lib_TA12.h"
 #include "Control_device.h"
 /* USER CODE END Includes */
 
@@ -101,11 +102,18 @@ struct Data_read{
 		unsigned char dht11[4];
 		unsigned char dht11_old[4];
 		uint16_t gas_old;
+		uint8_t pir_old;
+		uint8_t rain_old;
+		uint8_t light_old;
+		uint8_t current;
+		uint8_t current_old;
+		int temperature;
 }data_read;
 
 struct Data_send{
 		char DHT11[17];
 		char GAS[14];
+	
 		char LED1[8];
 		char LED2[8];
 		char LED3[8];
@@ -114,7 +122,10 @@ struct Data_send{
 		char RELAY[9];
 		char FAN1[8];
 		char FAN2[8];
+	
 		char ERASE[9]; //to erase flash EEPROM
+	
+		char TA12[9]; //current sensor
 }data_send;
 
 
@@ -215,6 +226,7 @@ void readSensor(){
 		if ((data_read.dht11_old[0] != data_read.dht11[0])||(data_read.dht11_old[2] != data_read.dht11[2])||(data_read.dht11_old[1] != data_read.dht11[1])||(data_read.dht11_old[3] != data_read.dht11[3])){
 			memcpy(data_read.dht11_old, data_read.dht11, 4);
 			//meaning data change 
+			data_read.temperature = data_read.dht11_old[2];
 			sprintf(data_send.DHT11, "DHT11 %d.%d %d.%d\r\n" ,data_read.dht11_old[2],data_read.dht11_old[3],data_read.dht11_old[0],data_read.dht11_old[1]);
 			sprintf(display.DHT, "%d.%d\xDF\x43  %d.%d\x37",data_read.dht11_old[2],data_read.dht11_old[3],data_read.dht11_old[0],data_read.dht11_old[1]);
 			serial_write(data_send.DHT11, strlen(data_send.DHT11));
@@ -230,6 +242,15 @@ void readSensor(){
 			serial_write(data_send.GAS, strlen(data_send.GAS));
 			HAL_Delay(500);
 		}	
+		
+		/* Cam bien dong TA12 */
+		data_read.current = read_Current(50);
+		if (data_read.current_old != data_read.current){
+			data_read.current_old = data_read.current;
+			sprintf(data_send.TA12, "TA12 %d\r\n" ,data_read.current_old);
+			//serial_write(data_send.TA12, strlen(data_send.TA12));
+			HAL_Delay(500);
+		}
 }
 
 /* stream Firebase */
@@ -431,11 +452,46 @@ void read_button_all(){
 	}
 }
 
-void smart_control(){
-	/* Doc cam bien anh sang dieu kien den tu dong */
-	DV.LED4_state = read_Light_sensor();
+void smart_control(int limit_temp, int limit_gas){
 	/* Doc cam bien PIR dieu khien den led tu dong */
-	DV.LED1_state = read_PIR();
+	if (data_read.pir_old != read_PIR()){
+			data_read.pir_old = read_PIR();
+			DV.LED1_state = data_read.pir_old;
+	}
+	/* Doc cam bien anh sang dieu khien den */
+	if (data_read.light_old != read_Light_sensor()){
+			data_read.light_old = read_Light_sensor();
+			DV.LED4_state = data_read.light_old;
+	}
+	/* Thu sao phoi do tu dong */
+	if (data_read.rain_old != read_Rain()){
+			data_read.rain_old = read_Rain();
+			if (data_read.rain_old == 1){
+				servo_position(1, 180);
+				HAL_Delay(100);
+			}
+			else{
+				servo_position(1, 0);
+				HAL_Delay(100);
+			}
+	}
+	
+	/* Nhiet do cao tu bat quat phong khach */
+	if (data_read.temperature > limit_temp){
+			DV.FAN1_state = 1;
+	}
+	else{
+			DV.FAN1_state = 0;
+	}
+	
+	/* Phat hien khi gas bat quat nha bep */
+	if (data_read.gas_old > limit_gas){
+			DV.FAN2_state = 1;
+	}
+	else{
+			DV.FAN2_state = 0;
+	}
+		
 }
 
 /* Code for comunication with R305 using UART 3*/
@@ -1283,6 +1339,7 @@ void Smart_controlTask(void const * argument)
 		readSensor();
 		lcd_display();
 		read_button_all();
+		smart_control(30, 100);
     osDelay(1);
   }
   /* USER CODE END Smart_controlTask */

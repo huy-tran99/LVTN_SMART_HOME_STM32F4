@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx,USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;  ../Drivers/STM32F4xx_HAL_Driver/Inc;  ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;  ../Middlewares/Third_Party/FreeRTOS/Source/include;  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;  ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;  ../Drivers/CMSIS/Include;  ..\..\LIB\DHT11;  ..\..\LIB\Finger_print;  ..\..\LIB\GAS;  ..\..\LIB\Key_PAD;  ..\..\LIB\LCD16x2;  ..\..\LIB\LCD20x4;  ..\..\LIB\Light_sensor;  ..\..\LIB\Music;  ..\..\LIB\PIR;  ..\..\LIB\RAIN;  ..\..\LIB\Servo;  ..\..\LIB\Control_device</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\..\LIB\DHT11;..\..\LIB\Finger_print;..\..\LIB\GAS;..\..\LIB\Key_PAD;..\..\LIB\LCD16x2;..\..\LIB\LCD20x4;..\..\LIB\Light_sensor;..\..\LIB\Music;..\..\LIB\PIR;..\..\LIB\RAIN;..\..\LIB\Servo;..\..\LIB\Control_device;..\..\LIB\TA12</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -477,6 +477,11 @@
               <FileName>stm32f4xx_hal_timebase_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/stm32f4xx_hal_timebase_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>lib_TA12.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\LIB\TA12\lib_TA12.c</FilePath>
             </File>
           </Files>
         </Group>
