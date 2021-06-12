@@ -871,9 +871,9 @@ interwork --depend=lvtn_final_v1\startup_stm32f407xx.d -olvtn_final_v1\startup_
 stm32f407xx.o -I..\\Inc -I.\RTE\_LVTN_Final_v1 -IC:\Users\Dell\AppData\Local\Ar
 m\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include -IC:\Users\Dell\AppData\Local\Arm\Pa
 cks\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include --prede
-fine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VER
-SION SETA 531" --predefine="_RTE_ SETA 1" --predefine="STM32F407xx SETA 1" --pr
-edefine="_RTE_ SETA 1" --list=startup_stm32f407xx.lst startup_stm32f407xx.s
+fine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 531" --predefine="
+_RTE_ SETA 1" --predefine="STM32F407xx SETA 1" --predefine="_RTE_ SETA 1" --lis
+t=startup_stm32f407xx.lst startup_stm32f407xx.s
 
 
 
@@ -1958,4 +1958,4 @@ Symbol: __main
       At line 190 in file startup_stm32f407xx.s
 Comment: __main used once
 2 symbols
-446 symbols in table
+445 symbols in table

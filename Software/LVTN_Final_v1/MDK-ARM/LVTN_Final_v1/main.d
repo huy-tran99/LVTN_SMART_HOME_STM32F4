@@ -49,3 +49,17 @@ lvtn_final_v1\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.
 lvtn_final_v1\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 lvtn_final_v1\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 lvtn_final_v1\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
+lvtn_final_v1\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+lvtn_final_v1\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+lvtn_final_v1\main.o: ..\..\LIB\DHT11\dht11.h
+lvtn_final_v1\main.o: ..\..\LIB\GAS\GAS.h
+lvtn_final_v1\main.o: ..\..\LIB\LCD16x2\lcd_16x2.h
+lvtn_final_v1\main.o: ..\..\LIB\LCD20x4\lcd_20x4.h
+lvtn_final_v1\main.o: ..\..\LIB\Light_sensor\Light_sensor.h
+lvtn_final_v1\main.o: ..\..\LIB\Music\music.h
+lvtn_final_v1\main.o: ..\..\LIB\PIR\PIR.h
+lvtn_final_v1\main.o: ..\..\LIB\RAIN\Rain.h
+lvtn_final_v1\main.o: ..\..\LIB\Servo\Servo.h
+lvtn_final_v1\main.o: ..\..\LIB\Finger_print\finger.h
+lvtn_final_v1\main.o: ..\..\LIB\Key_PAD\lib_keypad.h
+lvtn_final_v1\main.o: ..\..\LIB\Control_device\Control_device.h

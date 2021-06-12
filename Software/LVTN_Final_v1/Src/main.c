@@ -153,7 +153,10 @@ struct Touch{
 		int state2;
 		int state3;
 }touch;
-
+struct Display{
+		char DHT[16];
+		char GAS[16];
+}display;
 
 /* USER CODE END PFP */
 
@@ -213,6 +216,7 @@ void readSensor(){
 			memcpy(data_read.dht11_old, data_read.dht11, 4);
 			//meaning data change 
 			sprintf(data_send.DHT11, "DHT11 %d.%d %d.%d\r\n" ,data_read.dht11_old[2],data_read.dht11_old[3],data_read.dht11_old[0],data_read.dht11_old[1]);
+			sprintf(display.DHT, "%d.%d\xDF\x43  %d.%d\x37",data_read.dht11_old[2],data_read.dht11_old[3],data_read.dht11_old[0],data_read.dht11_old[1]);
 			serial_write(data_send.DHT11, strlen(data_send.DHT11));
 			HAL_Delay(500);
 		}
@@ -222,6 +226,7 @@ void readSensor(){
 		if (c > 0){
 			data_read.gas_old = read_GAS();
 			sprintf(data_send.GAS, "GAS %d\r\n" ,data_read.gas_old);
+			sprintf(display.GAS, "GAS %d ppm", data_read.gas_old);
 			serial_write(data_send.GAS, strlen(data_send.GAS));
 			HAL_Delay(500);
 		}	
@@ -393,16 +398,44 @@ void send_stream(){
 	}
 }
 
+/* end of stream */
+
 void lcd_display(){
-	
+		LCD_16x2_Clear();
+		LCD_16x2_SetCursor(1,1);
+		LCD_16x2_Send_String(display.DHT, STR_NOSLIDE);
+		LCD_16x2_SetCursor(2,1);
+		LCD_16x2_Send_String(display.GAS, STR_NOSLIDE);
 }
 
 void read_button_all(){
-	
+	if (read_Button(1) == 0){
+		touch.state1 = 0;
+	}
+	if (read_Button(1) == 1 && touch.state1 == 0){
+		//Control Relay
+		DV.RELAY_state = !DV.RELAY_state;
+	}
+	if (read_Button(2) == 0){
+		touch.state2 = 0;
+	}
+	if (read_Button(2) == 1 && touch.state2 == 0){
+		//Turn off buzzer
+		music_stop();
+	}
+	if (read_Button(3) == 0){
+		touch.state3 = 0;
+	}
+	if (read_Button(3) == 1 && touch.state3 == 0){
+		//to erase flash EEPROM
+	}
 }
 
 void smart_control(){
-	
+	/* Doc cam bien anh sang dieu kien den tu dong */
+	DV.LED4_state = read_Light_sensor();
+	/* Doc cam bien PIR dieu khien den led tu dong */
+	DV.LED1_state = read_PIR();
 }
 
 /* Code for comunication with R305 using UART 3*/
@@ -1177,7 +1210,19 @@ void Check_wifiTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+		if (check_wifi() == 0){
+			//connect with wifi fail 
+			control_led_onboard(0);
+		}
+		else if (check_wifi() == 2){
+			//smart config begin
+			blink_led_onboard();
+			HAL_Delay(100);
+		}
+		else if (check_wifi() == 1){
+			control_led_onboard(1);
+		}				
+		osDelay(100);
   }
   /* USER CODE END 5 */ 
 }
@@ -1214,6 +1259,9 @@ void Data_processingTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+		stream();
+		check_data_stream();
+		send_stream();
     osDelay(1);
   }
   /* USER CODE END Data_processingTask */
@@ -1232,6 +1280,9 @@ void Smart_controlTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+		readSensor();
+		lcd_display();
+		read_button_all();
     osDelay(1);
   }
   /* USER CODE END Smart_controlTask */
