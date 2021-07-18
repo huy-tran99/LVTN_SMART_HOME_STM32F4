@@ -35,3 +35,4 @@ lvtn_final_v1\control_device.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ha
 lvtn_final_v1\control_device.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 lvtn_final_v1\control_device.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 lvtn_final_v1\control_device.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
+lvtn_final_v1\control_device.o: ..\..\LIB\Servo\Servo.h

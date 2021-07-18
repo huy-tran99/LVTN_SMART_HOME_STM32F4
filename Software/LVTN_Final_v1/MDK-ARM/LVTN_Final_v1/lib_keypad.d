@@ -35,6 +35,3 @@ lvtn_final_v1\lib_keypad.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pw
 lvtn_final_v1\lib_keypad.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 lvtn_final_v1\lib_keypad.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 lvtn_final_v1\lib_keypad.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-lvtn_final_v1\lib_keypad.o: ..\..\LIB\LCD20x4\lcd_20x4.h
-lvtn_final_v1\lib_keypad.o: ..\..\LIB\Finger_print\finger.h
-lvtn_final_v1\lib_keypad.o: ../Inc/main.h

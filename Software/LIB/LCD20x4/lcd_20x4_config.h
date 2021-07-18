@@ -16,11 +16,11 @@ uint8_t i2cDeviceAddr_20x4 = 0x4E; //* LCD i2c module default address, change i2
 *@val: Default: hi2c1
 */
 I2C_HandleTypeDef hi2cx;
-extern I2C_HandleTypeDef hi2c1; //* Change "hi2c1" like hi2c2, hi2c3... according to which i2c type(i2c1,i2c2...) you use, default is hi2c1.
+extern I2C_HandleTypeDef hi2c2; //* Change "hi2c1" like hi2c2, hi2c3... according to which i2c type(i2c1,i2c2...) you use, default is hi2c1.
                                 //That I2C_HandleTypeDef hi2c1 comes from main.c*.
 static void hi2cx_define(void)
 {
-	hi2cx = hi2c1;	//* Change "hi2c1" like hi2c2, hi2c3... according to which i2c type you use, default is hi2c1.
+	hi2cx = hi2c2;	//* Change "hi2c1" like hi2c2, hi2c3... according to which i2c type you use, default is hi2c1.
 }
 
 /**

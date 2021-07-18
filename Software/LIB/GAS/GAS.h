@@ -5,9 +5,10 @@
 
 /********************************* GAS Define port connect ********************************/
 #define 	GAS_ADC 	hadc1
-
-uint16_t read_GAS(void);
-void convert_ppm(void);
+#define 	GAS_thresh 5
+//uint16_t read_GAS(void);
+//void convert_ppm(void);
+float read_gas_ppm();
 
 #endif 	
  

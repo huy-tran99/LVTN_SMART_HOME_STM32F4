@@ -50,6 +50,7 @@ lvtn_final_v1\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 lvtn_final_v1\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 lvtn_final_v1\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 lvtn_final_v1\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+lvtn_final_v1\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 lvtn_final_v1\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 lvtn_final_v1\main.o: ..\..\LIB\DHT11\dht11.h
 lvtn_final_v1\main.o: ..\..\LIB\GAS\GAS.h
@@ -60,8 +61,8 @@ lvtn_final_v1\main.o: ..\..\LIB\Music\music.h
 lvtn_final_v1\main.o: ..\..\LIB\PIR\PIR.h
 lvtn_final_v1\main.o: ..\..\LIB\RAIN\Rain.h
 lvtn_final_v1\main.o: ..\..\LIB\Servo\Servo.h
-lvtn_final_v1\main.o: ..\..\LIB\Finger_print\finger.h
-lvtn_final_v1\main.o: ..\..\LIB\Key_PAD\lib_keypad.h
 lvtn_final_v1\main.o: ..\..\LIB\TA12\lib_TA12.h
-lvtn_final_v1\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 lvtn_final_v1\main.o: ..\..\LIB\Control_device\Control_device.h
+lvtn_final_v1\main.o: ..\..\LIB\PASSWORD\password.h
+lvtn_final_v1\main.o: ..\..\LIB\Key_PAD\lib_keypad.h
+lvtn_final_v1\main.o: ..\..\LIB\Finger_print\finger.h

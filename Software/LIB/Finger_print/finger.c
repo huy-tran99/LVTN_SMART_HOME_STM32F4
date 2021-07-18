@@ -1,16 +1,12 @@
 #include "finger.h"
 #include "stm32f4xx_hal.h"
 #include "string.h"
-#include "lcd_20x4.h"
-#include "lib_keypad.h"
 
 //#########################################################################################################################
 extern UART_HandleTypeDef FINGERPRINT_USART;
 extern uint8_t txBuf[32];
 extern uint8_t rxBuf[32];
 extern uint8_t rxIndex;
-extern uint8_t PageID;
-extern uint8_t key;
 
 int FingerID = 0;
 
@@ -50,7 +46,7 @@ uint8_t receive_finger_search(uint8_t len)
       Finger.RxBuffer[i] = rxBuf[i];
       i++;  
    }
-		FingerID = Finger.RxBuffer[len-5];
+	FingerID = Finger.RxBuffer[len-5];
    temp = Finger.RxBuffer[len-7];
 	HAL_Delay(10);
    return temp;
@@ -255,8 +251,8 @@ uint8_t search(void)
    Finger.TxBuffer[15]=0x01;
    Finger.TxBuffer[16]=0x0D;
    HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,17,200);
-		rxIndex = 0;
-		HAL_Delay(500);
+   rxIndex = 0;
+   HAL_Delay(500);
 	
    return receive_finger_search(16);
    /** 
@@ -379,350 +375,9 @@ uint8_t FingerPrintFast(void){
 	HAL_Delay(300);
 		
    p=search();
-	HAL_Delay(1000);
-	if (p != FINGERPRINT_OK)  {HAL_Delay(300); return 0;}
+	HAL_Delay(500);
+	if (p != FINGERPRINT_OK)  return 0;
 		
-   // found a match!
-   LCD_20x4_Clear();
-   LCD_20x4_SetCursor(1,1);
-   LCD_20x4_Send_String ("Opened!",STR_NOSLIDE);
-		
-   LCD_20x4_SetCursor(1,10);
-   LCD_20x4_Print("ID:%.0f", returnFingerID());
-		
-	HAL_Delay(100);
+   HAL_Delay(100);
    return 1;
 }
-
-/* Function to enroll finger */
-uint8_t Enroll(void)
-{	
-	int p = -1;
-	while (p != FINGERPRINT_OK)
-   {
-		key = read_keypad();
-		if (key == 'D')
-		   break;
-
-		p = getImage();	
-		HAL_Delay(500);
-
-      switch (p)
-      {
-         case FINGERPRINT_OK:
-            LCD_20x4_Clear();
-            LCD_20x4_SetCursor(3,1);
-            LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
-            LCD_20x4_SetCursor(4,1);
-            LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
-            LCD_20x4_SetCursor(1,1);
-            LCD_20x4_Send_String ("Image taken1",STR_NOSLIDE);
-            HAL_Delay(1000);
-            break;
-         case FINGERPRINT_NOFINGER:
-            LCD_20x4_Clear();
-            LCD_20x4_SetCursor(3,1);
-            LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
-            LCD_20x4_SetCursor(4,1);
-            LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
-            HAL_Delay(300);
-            LCD_20x4_SetCursor(1,1);
-            LCD_20x4_Send_String (".1",STR_NOSLIDE);
-            HAL_Delay(300);
-            break;
-         case FINGERPRINT_PACKETRECIEVEERR:
-            LCD_20x4_Clear();
-            LCD_20x4_SetCursor(3,1);
-            LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
-            LCD_20x4_SetCursor(4,1);
-            LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
-            LCD_20x4_SetCursor(1,1);
-            LCD_20x4_Send_String ("Communication error",STR_NOSLIDE);
-            break;
-         case FINGERPRINT_IMAGEFAIL:
-            LCD_20x4_Clear();
-            LCD_20x4_SetCursor(3,1);
-            LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
-            LCD_20x4_SetCursor(4,1);
-            LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
-            LCD_20x4_SetCursor(1,1);
-            LCD_20x4_Send_String ("Imaging error",STR_NOSLIDE);
-            break;
-         default:
-            LCD_20x4_Clear();
-            LCD_20x4_SetCursor(3,1);
-            LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
-            LCD_20x4_SetCursor(4,1);
-            LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
-            LCD_20x4_SetCursor(1,1);
-            LCD_20x4_Send_String ("Unknown error",STR_NOSLIDE);
-            break;
-      }
-   }
-   // OK chup hinh xong, gio chuyen hinh sang character
-   p = image2Tz(1);
-   HAL_Delay(500);
-
-   switch (p) {
-      case FINGERPRINT_OK:
-		   LCD_20x4_Clear();
-         LCD_20x4_SetCursor(1,1);
-			LCD_20x4_Send_String ("Character1",STR_NOSLIDE);
-			HAL_Delay(1000);
-         break;
-      case FINGERPRINT_IMAGEMESS:
-         return p;
-      case FINGERPRINT_PACKETRECIEVEERR:
-         return p;
-      case FINGERPRINT_FEATUREFAIL:
-         return p;
-      case FINGERPRINT_INVALIDIMAGE:
-         return p;
-      default:
-         return p;
-	}
-   
-   //Done
-
-   LCD_20x4_Clear();
-   LCD_20x4_SetCursor(3,1);
-   LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
-   LCD_20x4_SetCursor(4,1);
-   LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
-   LCD_20x4_SetCursor(1,1);
-   LCD_20x4_Send_String ("Remove finger",STR_NOSLIDE);
-   HAL_Delay(500);
-
-   p = -1;
-   
-   while (p != FINGERPRINT_NOFINGER)
-   {
-      key = read_keypad();
-      if (key == 'D')
-         break;
-      p = getImage();
-      HAL_Delay(500);      
-   }
-
-   p = -1;
-   
-   while (p != FINGERPRINT_OK) 
-   {	
-		key = read_keypad();
-		if (key == 'D')
-			break;
-      
-      p = getImage();
-		HAL_Delay(500);
-      switch (p) 
-      {
-         case FINGERPRINT_OK:
-            LCD_20x4_Clear();
-            LCD_20x4_SetCursor(3,1);
-            LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
-            LCD_20x4_SetCursor(4,1);
-            LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
-            LCD_20x4_SetCursor(1,1);
-            LCD_20x4_Send_String ("Image taken2",STR_NOSLIDE);
-            HAL_Delay(1000);
-            break;
-         case FINGERPRINT_NOFINGER:
-            LCD_20x4_Clear();
-            LCD_20x4_SetCursor(3,1);
-            LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
-            LCD_20x4_SetCursor(4,1);
-            LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
-            HAL_Delay(300);
-            LCD_20x4_SetCursor(1,1);
-            LCD_20x4_Send_String (".2",STR_NOSLIDE);
-            HAL_Delay(300);
-            break;
-         case FINGERPRINT_PACKETRECIEVEERR:
-            LCD_20x4_Clear();
-            LCD_20x4_SetCursor(3,1);
-            LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
-            LCD_20x4_SetCursor(4,1);
-            LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
-            LCD_20x4_SetCursor(1,1);
-            LCD_20x4_Send_String ("Communication error",STR_NOSLIDE);
-            break;
-         case FINGERPRINT_IMAGEFAIL:
-            LCD_20x4_Clear();
-            LCD_20x4_SetCursor(3,1);
-            LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
-            LCD_20x4_SetCursor(4,1);
-            LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
-            LCD_20x4_SetCursor(1,1);
-            LCD_20x4_Send_String ("Imaging error",STR_NOSLIDE);
-            break;
-         default:
-            LCD_20x4_Clear();
-            LCD_20x4_SetCursor(3,1);
-            LCD_20x4_Send_String("Hold D:",STR_NOSLIDE);
-            LCD_20x4_SetCursor(4,1);
-            LCD_20x4_Send_String("Cancel and close!",STR_NOSLIDE);
-            LCD_20x4_SetCursor(1,1);
-            LCD_20x4_Send_String ("Unknown error",STR_NOSLIDE);
-            break;
-      }
-   }
-
-   p = image2Tz(2);
-   HAL_Delay(500);		
-   switch (p) 
-   {
-      case FINGERPRINT_OK:
-         LCD_20x4_Clear();
-         LCD_20x4_SetCursor(1,1);
-         LCD_20x4_Send_String ("Character2",STR_NOSLIDE);
-         HAL_Delay(1000);
-         break;
-      case FINGERPRINT_IMAGEMESS:
-         return p;
-      case FINGERPRINT_PACKETRECIEVEERR:
-         return p;
-      case FINGERPRINT_FEATUREFAIL:
-         return p;
-      case FINGERPRINT_INVALIDIMAGE:
-         return p;
-      default:
-         return p;
-   }
-
-   //OK converted!
-
-   p = createModel();
-   HAL_Delay(500);
-   if (p == FINGERPRINT_OK) 
-   {
-      //Prints matched!
-   } 
-   else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-      LCD_20x4_Clear();
-      LCD_20x4_SetCursor(1,1);
-      LCD_20x4_Send_String ("Unknown error",STR_NOSLIDE);
-      LCD_20x4_SetCursor(4,1);
-      LCD_20x4_Send_String ("             D=Close",STR_NOSLIDE);
-      return p;
-   } 
-   else if (p == FINGERPRINT_ENROLLMISMATCH) {
-      LCD_20x4_Clear();
-      LCD_20x4_SetCursor(1,1);
-      LCD_20x4_Send_String ("Not match",STR_NOSLIDE);
-      LCD_20x4_SetCursor(4,1);
-      LCD_20x4_Send_String ("             D=Close",STR_NOSLIDE);
-      return p;
-   } 
-   else {
-      LCD_20x4_Clear();
-      LCD_20x4_SetCursor(1,1);
-      LCD_20x4_Send_String ("Unknown error",STR_NOSLIDE);
-      LCD_20x4_SetCursor(4,1);
-      LCD_20x4_Send_String ("             D=Close",STR_NOSLIDE);
-      return p;
-   }
-
-	p = storeModel(PageID);
-	HAL_Delay(500);	
-   if (p == FINGERPRINT_OK) {
-      LCD_20x4_Clear();
-      LCD_20x4_SetCursor(1,1);
-      LCD_20x4_Send_String ("Stored ",STR_NOSLIDE);
-      LCD_20x4_SetCursor(1,9);
-      LCD_20x4_Print("ID:%.0f", PageID);
-      LCD_20x4_SetCursor(4,1);
-      LCD_20x4_Send_String ("             D=Close",STR_NOSLIDE);
-      HAL_Delay(1000);
-   } 
-   else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-      LCD_20x4_Clear();
-      LCD_20x4_SetCursor(1,1);
-      LCD_20x4_Send_String ("Communication error",STR_NOSLIDE);
-      LCD_20x4_SetCursor(4,1);
-      LCD_20x4_Send_String ("             D=Close",STR_NOSLIDE);
-      return p;
-   } 
-   else if (p == FINGERPRINT_BADLOCATION) {
-      LCD_20x4_Clear();
-      LCD_20x4_SetCursor(1,1);
-      LCD_20x4_Send_String ("Unknown error",STR_NOSLIDE);
-      LCD_20x4_SetCursor(4,1);
-      LCD_20x4_Send_String ("             D=Close",STR_NOSLIDE);
-      return p;
-   } 
-   else if (p == FINGERPRINT_FLASHERR) {
-      LCD_20x4_Clear();
-      LCD_20x4_SetCursor(1,1);
-      LCD_20x4_Send_String ("Unknown error",STR_NOSLIDE);
-      LCD_20x4_SetCursor(4,1);
-      LCD_20x4_Send_String ("             D=Close",STR_NOSLIDE);
-      return p;
-   } 
-   else {
-      LCD_20x4_Clear();
-      LCD_20x4_SetCursor(1,1);
-      LCD_20x4_Send_String ("Unknown error",STR_NOSLIDE);
-      LCD_20x4_SetCursor(4,1);
-      LCD_20x4_Send_String ("             D=Close",STR_NOSLIDE);
-      return p;
-   }
-	HAL_Delay(100);
-	return 1;
-}
-
-
-uint8_t getFingerprintID(void) 
-{
-   uint8_t p = getImage();
-	HAL_Delay(500);
-   switch (p) {
-      case FINGERPRINT_OK:
-         break;
-      case FINGERPRINT_NOFINGER:
-         return p;
-      case FINGERPRINT_PACKETRECIEVEERR:
-         return p;
-      case FINGERPRINT_IMAGEFAIL:
-         return p;
-      default:
-         return p;
-   }
-    
-   p = image2Tz(1);
-	HAL_Delay(500);
-   switch (p) {
-      case FINGERPRINT_OK:
-         break;
-      case FINGERPRINT_IMAGEMESS:
-         return p;
-      case FINGERPRINT_PACKETRECIEVEERR:
-         return p;
-      case FINGERPRINT_FEATUREFAIL:
-         return p;
-      case FINGERPRINT_INVALIDIMAGE:
-         return p;
-      default:
-         return p;
-   }
-
-   p = search();
-	HAL_Delay(1000);
-   if (p == FINGERPRINT_OK) {
-      //Found a print match!
-   } 
-   else if (p == FINGERPRINT_PACKETRECIEVEERR) {
-      return p;
-   } 
-   else if (p == FINGERPRINT_NOTFOUND) {
-      return p;
-   } 
-   else {
-      return p;
-   }
-
-   LCD_20x4_Clear();
-   LCD_20x4_SetCursor(1,10);
-   LCD_20x4_Print("ID:%.0f", returnFingerID());
-   return FingerID;
-}
-

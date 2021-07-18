@@ -1,6 +1,14 @@
 #include "Control_device.h"
+#include "Servo.h"
 
-int state = 0;
+/*
+servo cua so 	0 	open
+							70 	close
+							
+							LED_onboard PA12: phat hien data gui ve
+							LED_onboard PA13: kiem tra ket noi wifi
+							LED_onboard PA14 + PA15: kiem tra xem phai o trong che do config hay khong 
+*/
 
 void control_Fan(int dir, int state){
     if (dir == 1){
@@ -37,38 +45,56 @@ void control_Relay(int state){
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, state);   
 }
 
-void control_Door(int state){
-    //init before
+void control_Gate(int state){
+	if (state == 0){
+			//close 
+			servo_position(1, 0);
+			HAL_Delay(10);
+	}
+	else if (state == 1){
+			//open
+			servo_position(1, 70);
+			HAL_Delay(10);
+	}
 }
 
-
-int read_Button(int dir){
-    //Read pin PE15
-    if (dir == 1){
-        return HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_15);
-    }
-    //Read pin PB13
-    else if (dir == 2){
-        return HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13);
-    }
-    //Read pin PB15
-    else if (dir == 3){
-        return HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_15);
-    }
+void control_Pole(int state){
+		if (state == 0){
+			//close 
+			servo_position(2, 0);
+			HAL_Delay(10);
+		}
+		else if (state == 1){
+			//open
+			servo_position(2, 70);
+			HAL_Delay(10);
+		}
 }
 
-void blink_led_onboard(void){
-    //Change state of led on board PA12
-    state = !state;
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, state);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, state);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, state);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, state);
+void control_Window(int state){
+    if (state == 0){
+			//close 
+			servo_position(3, 0);
+			HAL_Delay(10);
+		}
+		else if (state == 1){
+			//open
+			servo_position(3, 70);
+			HAL_Delay(10);
+		}
 }
 
-void control_led_onboard(int state){
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, state);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, state);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, state);
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, state);
+void control_led_onboard(int dir){
+	if (dir == 0){
+			//led PD14 kiem tra
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, 0);
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, 0);
+	}
+	else if	(dir == 1){
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, 1);
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, 0);
+	}
+	else if (dir == 2){
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+	}
 }

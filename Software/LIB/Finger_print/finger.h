@@ -86,9 +86,5 @@ uint8_t empty(void);
 uint8_t deleteModel(uint8_t PageID);
 uint8_t returnFingerID(void);
 
-uint8_t Enroll(void);
 uint8_t FingerPrintFast(void);
-uint8_t getFingerprintID(void);
-
-
 #endif

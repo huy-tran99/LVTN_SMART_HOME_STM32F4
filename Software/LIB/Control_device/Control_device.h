@@ -6,9 +6,9 @@
 void control_Fan(int dir, int state);
 void control_Led(int dir, int state);
 void control_Relay(int state);
-void control_Door(int state);
-int read_Button(int dir);
-void blink_led_onboard(void);
-void control_led_onboard(int state);
+void control_Gate(int state);
+void control_Pole(int state);
+void control_Window(int state);
+void control_led_onboard(int dir);
 
 #endif

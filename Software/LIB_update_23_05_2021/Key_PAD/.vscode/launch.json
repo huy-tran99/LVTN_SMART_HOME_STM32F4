@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "e:\\LVTN_SMART_HOME_STM32F4\\Software\\LIB_update_23_05_2021\\Key_PAD",
+      "environment": [],
+      "program": "e:\\LVTN_SMART_HOME_STM32F4\\Software\\LIB_update_23_05_2021\\Key_PAD\\build\\Debug\\outDebug",
+      "internalConsoleOptions": "openOnSessionStart",
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
+      "externalConsole": false
+    }
+  ]
+}

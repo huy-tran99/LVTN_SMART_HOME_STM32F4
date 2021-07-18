@@ -25,6 +25,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+#include "stdlib.h"
 #include "string.h"
 #include "dht11.h"
 #include "GAS.h"
@@ -35,10 +36,9 @@
 #include "PIR.h"
 #include "Rain.h"
 #include "Servo.h"
-#include "finger.h"
-#include "lib_keypad.h"
 #include "lib_TA12.h"
 #include "Control_device.h"
+#include "password.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,10 +71,11 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart3;
 UART_HandleTypeDef huart6;
 
-osThreadId Check_wifiHandle;
-osThreadId Finger_printHandle;
-osThreadId Data_processingHandle;
-osThreadId Smart_controlHandle;
+osThreadId Task01Handle;
+osThreadId Task02Handle;
+osThreadId Task03Handle;
+osThreadId Task04Handle;
+osSemaphoreId BinSemHandle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -92,40 +93,58 @@ static void MX_TIM9_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_USART6_UART_Init(void);
-void Check_wifiTask(void const * argument);
-void Finger_printTask(void const * argument);
-void Data_processingTask(void const * argument);
-void Smart_controlTask(void const * argument);
+void Start_Task01(void const * argument);
+void Start_Task02(void const * argument);
+void Start_Task03(void const * argument);
+void Start_Task04(void const * argument);
 
 /* USER CODE BEGIN PFP */
+volatile int flash_wifi = 0; 
+volatile int automation_flash = 0; //auto off  
+
+long timeout_to_run_task1 = 0;
+long timeout_to_run_task2 = 0;
+long timeout_to_run_task3 = 0;
+long timeout_to_run_task4 = 0;
+
+char _limit_temp[2] = "30";
+int limit_temp = 30;
+
 struct Data_read{
 		unsigned char dht11[4];
 		unsigned char dht11_old[4];
-		uint16_t gas_old;
+		float gas;
+		float gas_old;
+		uint8_t pir;
 		uint8_t pir_old;
+		uint8_t rain;
 		uint8_t rain_old;
-		uint8_t light_old;
+		uint8_t light_sensor;
+		uint8_t light_sensor_old;
 		uint8_t current;
 		uint8_t current_old;
 		int temperature;
 }data_read;
 
 struct Data_send{
-		char DHT11[17];
-		char GAS[14];
+		char DHT11[18];
+		char GAS[12];
 	
-		char LED1[8];
-		char LED2[8];
-		char LED3[8];
-		char LED4[8];
-		char SECURITY[12];
-		char RELAY[9];
-		char FAN1[8];
-		char FAN2[8];
+		char LED1[6];
+		char LED2[6];
+		char LED3[6];
+		char LED4[6];
+
+		char RELAY[7];
+		char FAN1[6];
+		char FAN2[6];
 	
-		char ERASE[9]; //to erase flash EEPROM
-	
-		char TA12[9]; //current sensor
+		char ERASE[7]; //to erase flash EEPROM
+		char CURRENT[9]; //current sensor
+		
+		char GATE[6]; //servo cua chinh
+		char POLE[6]; //servo xao phoi do
+		char WINDOW[8]; //servo cua so
 }data_send;
 
 
@@ -137,7 +156,9 @@ struct Firebase{
 		int LED2_state;
 		int LED3_state;
 		int LED4_state;
-		int DOOR_state;
+		int GATE_state;
+		int POLE_state;
+		int WINDOW_state;
 }FB;
 
 struct Device{
@@ -148,7 +169,10 @@ struct Device{
 		int LED2_state;
 		int LED3_state;
 		int LED4_state;
-		int DOOR_state;
+		int GATE_state;
+		int	POLE_state;
+		int WINDOW_state;
+			
 		int FAN1_old_state;
 		int FAN2_old_state;
 		int RELAY_old_state;
@@ -156,14 +180,19 @@ struct Device{
 		int LED2_old_state;
 		int LED3_old_state;
 		int LED4_old_state;
-		int DOOR_old_state;
+		int GATE_old_state;
+		int POLE_old_state;
+		int WINDOW_old_state;
 }DV;
 
 struct Touch{
 		int state1;
 		int state2;
 		int state3;
+		int counter_1;
+		int counter_2;
 }touch;
+
 struct Display{
 		char DHT[16];
 		char GAS[16];
@@ -174,11 +203,10 @@ struct Display{
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-
 /* Code for comunication with esp8266 using UART 1 and UART 6 */
 /*	define */
 #define txBuf_size 30
-#define rxBuf_size 10
+#define rxBuf_size 50
 
 char tx_Buf[txBuf_size];
 char rx_Buf[rxBuf_size];
@@ -188,76 +216,93 @@ uint16_t rx_Index = 0;
 char temp_receive[rxBuf_size]; //data temp read from esp
 
 /* Function to comunication */
-static void serial_write(void* data, size_t len){
-	HAL_UART_Transmit(&huart1, (uint8_t*)data, (uint16_t)len, 100);
-}
-
 void serial_send_cmd(char data[]){
-		char line[txBuf_size];
-		snprintf(line, sizeof(line), "%s\r\n", data);
-		serial_write(line, strlen(line));
+		if (flash_wifi == 1){	
+			HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
+			char line[txBuf_size];
+			snprintf(line, sizeof(line), "%s\r\n", data);
+			HAL_UART_Transmit(&huart1, (uint8_t*)line, strlen(line), 100);
+		}
 }
 
 char* serial_read(){
-	strcpy(temp_receive, rx_Buf);
-	return temp_receive;
-}
-
-/* function to check connect wifi */
-int check_wifi(){
-	char temp[2];
-	if (strncmp(serial_read(),"wifi",4)==0){
-		temp[0] = temp_receive[4];
-		if (temp[0] == '0'){
-			return 0; //disconnected
-		}
-		if (temp[0] == '1'){
-			return 1; //connected
-		}
-		if (temp[0] == '2'){
-			return 2; //smartconfig
-		}
-	}
+		strcpy(temp_receive, rx_Buf);
+		return temp_receive;
 }
 
 /* Function to read sensor */
 void readSensor(){
 		read_DHT11(data_read.dht11);
+		data_read.gas = read_gas_ppm();
+		data_read.current = read_Current(70);
 		if ((data_read.dht11_old[0] != data_read.dht11[0])||(data_read.dht11_old[2] != data_read.dht11[2])||(data_read.dht11_old[1] != data_read.dht11[1])||(data_read.dht11_old[3] != data_read.dht11[3])){
 			memcpy(data_read.dht11_old, data_read.dht11, 4);
 			//meaning data change 
 			data_read.temperature = data_read.dht11_old[2];
-			sprintf(data_send.DHT11, "DHT11 %d.%d %d.%d\r\n" ,data_read.dht11_old[2],data_read.dht11_old[3],data_read.dht11_old[0],data_read.dht11_old[1]);
+			sprintf(data_send.DHT11, "DHT11 %d.%d %d.%d" ,data_read.dht11_old[2],data_read.dht11_old[3],data_read.dht11_old[0],data_read.dht11_old[1]);
 			sprintf(display.DHT, "%d.%d\xDF\x43  %d.%d\x37",data_read.dht11_old[2],data_read.dht11_old[3],data_read.dht11_old[0],data_read.dht11_old[1]);
-			serial_write(data_send.DHT11, strlen(data_send.DHT11));
-			HAL_Delay(500);
+			serial_send_cmd(data_send.DHT11);
+			HAL_Delay(30);
 		}
 		
-		uint16_t c = 0; //do thay doi cua cam bien gas
-		c = (data_read.gas_old > read_GAS()) ? data_read.gas_old - read_GAS(): read_GAS() - data_read.gas_old;
-		if (c > 0){
-			data_read.gas_old = read_GAS();
-			sprintf(data_send.GAS, "GAS %d\r\n" ,data_read.gas_old);
-			sprintf(display.GAS, "GAS %d ppm", data_read.gas_old);
-			serial_write(data_send.GAS, strlen(data_send.GAS));
-			HAL_Delay(500);
+		if (data_read.gas_old != data_read.gas){
+			data_read.gas_old = data_read.gas;
+			sprintf(data_send.GAS, "GAS %4.2f" ,data_read.gas_old);
+			sprintf(display.GAS, "GAS %4.2f ppm", data_read.gas_old);
+			serial_send_cmd(data_send.GAS);
+			HAL_Delay(30);
+			if (data_read.gas_old >= GAS_thresh){
+				control_Fan(2, 1);
+				music_play(500);
+				HAL_Delay(200);
+				music_play(700);
+				HAL_Delay(200);
+			}	
+			else{
+				control_Fan(2, 0);
+				music_stop();
+			}
 		}	
 		
-		/* Cam bien dong TA12 */
-		data_read.current = read_Current(50);
 		if (data_read.current_old != data_read.current){
 			data_read.current_old = data_read.current;
-			sprintf(data_send.TA12, "TA12 %d\r\n" ,data_read.current_old);
-			//serial_write(data_send.TA12, strlen(data_send.TA12));
-			HAL_Delay(500);
+			sprintf(data_send.CURRENT, "CURRENT %d", data_read.current_old);
+			serial_send_cmd(data_send.CURRENT);
+			HAL_Delay(30);
 		}
+		
+//		uint16_t c = 0; //do thay doi cua cam bien gas
+//		c = (data_read.gas_old > read_GAS()) ? data_read.gas_old - read_GAS(): read_GAS() - data_read.gas_old;
+//		if (c > 0){
+//			data_read.gas_old = read_GAS();
+//			sprintf(data_send.GAS, "GAS %d\r\n" ,data_read.gas_old);
+//			sprintf(display.GAS, "GAS %d ppm", data_read.gas_old);
+//			serial_send_cmd(data_send.GAS);
+//			HAL_Delay(500);
+//		}	
 }
 
 /* stream Firebase */
 void stream(){
 	char temp[2];
+	//serial_read();
+	//check wifi
+	flash_wifi = 1;//connected
+	if (strncmp(temp_receive,"WIFI",4)==0){
+		temp[0] = temp_receive[4];
+		if (temp[0] == '2'){
+			flash_wifi = 0; //smartconfig
+		}
+	}
+	
+	if (strncmp(temp_receive,"LTMP",4)==0){
+		_limit_temp[0] = temp_receive[4];
+		_limit_temp[1] = temp_receive[5];
+		limit_temp = atoi(_limit_temp);
+	}
+	
 	//stream FAN state
-	if (strncmp(serial_read(),"FAN1",4)==0){
+	if (strncmp(temp_receive,"FAN1",4)==0){
 		temp[0] = temp_receive[4];
 		if (temp[0] == '0'){
 			FB.FAN1_state = 0;
@@ -266,7 +311,7 @@ void stream(){
 			FB.FAN1_state = 1;
 		}
 	}
-	if (strncmp(serial_read(),"FAN2",4)==0){
+	if (strncmp(temp_receive,"FAN2",4)==0){
 		temp[0] = temp_receive[4];
 		if (temp[0] == '0'){
 			FB.FAN2_state = 0;
@@ -276,8 +321,8 @@ void stream(){
 		}
 	}
 	//stream RELAY state
-	if (strncmp(serial_read(),"RELAY",4)==0){
-		temp[0] = temp_receive[4];
+	if (strncmp(temp_receive,"RELAY",5)==0){
+		temp[0] = temp_receive[5];
 		if (temp[0] == '0'){
 			FB.RELAY_state = 0;
 		}
@@ -286,7 +331,7 @@ void stream(){
 		}
 	}
 	//stream LED1 state
-	if (strncmp(serial_read(),"LED1",4)==0){
+	if (strncmp(temp_receive,"LED1",4)==0){
 		temp[0] = temp_receive[4];
 		if (temp[0] == '0'){
 			FB.LED1_state = 0;
@@ -296,7 +341,7 @@ void stream(){
 		}
 	}
 	//stream LED2 state 
-	if (strncmp(serial_read(),"LED2",4)==0){
+	if (strncmp(temp_receive,"LED2",4)==0){
 		temp[0] = temp_receive[4];
 		if (temp[0] == '0'){
 			FB.LED2_state = 0;
@@ -306,7 +351,7 @@ void stream(){
 		}
 	}	
 	//stream lED3 state
-	if (strncmp(serial_read(),"LED3",4)==0){
+	if (strncmp(temp_receive,"LED3",4)==0){
 		temp[0] = temp_receive[4];
 		if (temp[0] == '0'){
 			FB.LED3_state = 0;
@@ -316,7 +361,7 @@ void stream(){
 		}
 	}	
 	//stream LED4 state
-	if (strncmp(serial_read(),"LED4",4)==0){
+	if (strncmp(temp_receive,"LED4",4)==0){
 		temp[0] = temp_receive[4];
 		if (temp[0] == '0'){
 			FB.LED4_state = 0;
@@ -325,19 +370,41 @@ void stream(){
 			FB.LED4_state = 1;
 		}
 	}	
-	//stream DOOR state
-	if (strncmp(serial_read(),"DOOR",4)==0){
+	//stream GATE state
+	if (strncmp(temp_receive,"GATE",4)==0){
 		temp[0] = temp_receive[4];
 		if (temp[0] == '0'){
-			FB.DOOR_state = 0;
+			FB.GATE_state = 0;
 		}
 		if (temp[0] == '1'){
-			FB.DOOR_state = 1;
+			FB.GATE_state = 1;
 		}
 	}	
+	
+	//stream POLE state
+	if (strncmp(temp_receive,"POLE",4)==0){
+		temp[0] = temp_receive[4];
+		if (temp[0] == '0'){
+			FB.POLE_state = 0;
+		}
+		if (temp[0] == '1'){
+			FB.POLE_state = 1;
+		}
+	}
+
+	//stream Window state
+	if (strncmp(temp_receive,"WINDOW",6)==0){
+		temp[0] = temp_receive[6];
+		if (temp[0] == '0'){
+			FB.WINDOW_state = 0;
+		}
+		if (temp[0] == '1'){
+			FB.WINDOW_state = 1;
+		}
+	}		
 }
 
-void check_data_stream(){
+void save_stream(){
 		if (DV.FAN1_state != FB.FAN1_state){
 			DV.FAN1_state = FB.FAN1_state;
 		}		
@@ -359,63 +426,97 @@ void check_data_stream(){
 		if (DV.LED4_state != FB.LED4_state){
 			DV.LED4_state = FB.LED4_state;
 		}	
-		if (DV.DOOR_state != FB.DOOR_state){
-			DV.DOOR_state = FB.DOOR_state;
+		if (DV.GATE_state != FB.GATE_state){
+			DV.GATE_state = FB.GATE_state;
+		}	
+		if (DV.POLE_state != FB.POLE_state){
+			DV.POLE_state = FB.POLE_state;
+		}	
+		if (DV.WINDOW_state != FB.WINDOW_state){
+			DV.WINDOW_state = FB.WINDOW_state;
 		}	
 }
 
-
-
-
-void send_stream(){
+void stream_handle(){
+	if (flash_wifi == 1){
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, 1);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, 0);
+	}
+	if (flash_wifi == 0){
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, 0);
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+		osDelay(100);
+	}
 	if (DV.LED1_state != DV.LED1_old_state){
 		DV.LED1_old_state = DV.LED1_state;
-		sprintf(data_send.LED1, "LED1 %d\r\n" ,DV.LED1_old_state);
-		serial_write(data_send.LED1, strlen(data_send.LED1));
-		HAL_Delay(200);
+		control_Led(1, DV.LED1_old_state);
+		sprintf(data_send.LED1, "LED1 %d" ,DV.LED1_old_state);
+		serial_send_cmd(data_send.LED1);
+		HAL_Delay(30);
 	}
 	if (DV.LED2_state != DV.LED2_old_state){
 		DV.LED2_old_state = DV.LED2_state;
-		sprintf(data_send.LED2, "LED2 %d\r\n" ,DV.LED2_old_state);
-		serial_write(data_send.LED2, strlen(data_send.LED2));
-		HAL_Delay(200);
+		control_Led(2, DV.LED2_old_state);
+		sprintf(data_send.LED2, "LED2 %d" ,DV.LED2_old_state);
+		serial_send_cmd(data_send.LED2);
+		HAL_Delay(30);
 	}
 	
 	if (DV.LED3_state != DV.LED3_old_state){
 		DV.LED3_old_state = DV.LED3_state;
-		sprintf(data_send.LED3, "LED3 %d\r\n" ,DV.LED3_old_state);
-		serial_write(data_send.LED3, strlen(data_send.LED3));
-		HAL_Delay(200);
+		control_Led(3, DV.LED3_old_state);
+		sprintf(data_send.LED3, "LED3 %d" ,DV.LED3_old_state);
+		serial_send_cmd(data_send.LED3);
+		HAL_Delay(30);
 	}
 	if (DV.LED4_state != DV.LED4_old_state){
 		DV.LED4_old_state = DV.LED4_state;
-		sprintf(data_send.LED4, "LED4 %d\r\n" ,DV.LED4_old_state);
-		serial_write(data_send.LED4, strlen(data_send.LED4));
-		HAL_Delay(200);
+		control_Led(4, DV.LED4_old_state);
+		sprintf(data_send.LED4, "LED4 %d" ,DV.LED4_old_state);
+		serial_send_cmd(data_send.LED4);
+		HAL_Delay(30);
 	}
 	if (DV.RELAY_state != DV.RELAY_old_state){
 		DV.RELAY_old_state = DV.RELAY_state;
-		sprintf(data_send.RELAY, "RELAY %d\r\n" ,DV.RELAY_old_state);
-		serial_write(data_send.RELAY, strlen(data_send.RELAY));
-		HAL_Delay(200);
+		control_Relay(DV.RELAY_old_state);
+		sprintf(data_send.RELAY, "RELAY %d" ,DV.RELAY_old_state);
+		serial_send_cmd(data_send.RELAY);
+		HAL_Delay(30);
 	}
 	if (DV.FAN1_state != DV.FAN1_old_state){
 		DV.FAN1_old_state = DV.FAN1_state;
-		sprintf(data_send.FAN1, "FAN1 %d\r\n" ,DV.FAN1_old_state);
-		serial_write(data_send.FAN1, strlen(data_send.FAN1));
-		HAL_Delay(200);
+		control_Fan(1, DV.FAN1_old_state);
+		sprintf(data_send.FAN1, "FAN1 %d" ,DV.FAN1_old_state);
+		serial_send_cmd(data_send.FAN1);
+		HAL_Delay(30);
 	}
 	if (DV.FAN2_state != DV.FAN2_old_state){
 		DV.FAN2_old_state = DV.FAN2_state;
-		sprintf(data_send.FAN2, "FAN2 %d\r\n" ,DV.FAN2_old_state);
-		serial_write(data_send.FAN2, strlen(data_send.FAN2));
-		HAL_Delay(200);
+		control_Fan(2, DV.FAN2_old_state);
+		sprintf(data_send.FAN2, "FAN2 %d" ,DV.FAN2_old_state);
+		serial_send_cmd(data_send.FAN2);
+		HAL_Delay(30);
 	}
-	if (DV.DOOR_state != DV.DOOR_old_state){
-		DV.DOOR_old_state = DV.DOOR_state;
-		sprintf(data_send.SECURITY, "SECURITY %d\r\n" ,DV.DOOR_old_state);
-		serial_write(data_send.SECURITY, strlen(data_send.SECURITY));
-		HAL_Delay(200);
+	if (DV.GATE_state != DV.GATE_old_state){
+		DV.GATE_old_state = DV.GATE_state;
+		control_Gate(DV.GATE_old_state);
+		sprintf(data_send.GATE, "GATE %d" ,DV.GATE_old_state);
+		serial_send_cmd(data_send.GATE);
+		HAL_Delay(30);
+	}
+	if (DV.POLE_state != DV.POLE_old_state){
+		DV.POLE_old_state = DV.POLE_state;
+		control_Pole(DV.POLE_old_state);
+		sprintf(data_send.POLE, "POLE %d" ,DV.POLE_old_state);
+		serial_send_cmd(data_send.POLE);
+		HAL_Delay(30);
+	}
+	if (DV.WINDOW_state != DV.WINDOW_old_state){
+		DV.WINDOW_old_state = DV.WINDOW_state;
+		control_Window(DV.WINDOW_old_state);
+		sprintf(data_send.WINDOW, "WINDOW %d" ,DV.WINDOW_old_state);
+		serial_send_cmd(data_send.WINDOW);
+		HAL_Delay(30);
 	}
 }
 
@@ -429,80 +530,72 @@ void lcd_display(){
 		LCD_16x2_Send_String(display.GAS, STR_NOSLIDE);
 }
 
-void read_button_all(){
-	if (read_Button(1) == 0){
-		touch.state1 = 0;
-	}
-	if (read_Button(1) == 1 && touch.state1 == 0){
-		//Control Relay
-		DV.RELAY_state = !DV.RELAY_state;
-	}
-	if (read_Button(2) == 0){
-		touch.state2 = 0;
-	}
-	if (read_Button(2) == 1 && touch.state2 == 0){
-		//Turn off buzzer
-		music_stop();
-	}
-	if (read_Button(3) == 0){
-		touch.state3 = 0;
-	}
-	if (read_Button(3) == 1 && touch.state3 == 0){
-		//to erase flash EEPROM
-	}
+void control_home(){
+	control_led_onboard(flash_wifi);
+	control_Led(1, DV.LED1_old_state);
+	control_Led(2, DV.LED2_old_state);
+	control_Led(3, DV.LED3_old_state);
+	control_Led(4, DV.LED4_old_state);
+	control_Fan(1, DV.FAN1_old_state);
+	control_Fan(2, DV.FAN2_old_state);
+	control_Relay(DV.RELAY_old_state);
+	control_Gate(DV.GATE_old_state);
+	control_Pole(DV.POLE_old_state);
+	control_Window(DV.WINDOW_old_state);
 }
 
-void smart_control(int limit_temp, int limit_gas){
-	/* Doc cam bien PIR dieu khien den led tu dong */
-	if (data_read.pir_old != read_PIR()){
-			data_read.pir_old = read_PIR();
-			DV.LED1_state = data_read.pir_old;
-	}
-	/* Doc cam bien anh sang dieu khien den */
-	if (data_read.light_old != read_Light_sensor()){
-			data_read.light_old = read_Light_sensor();
-			DV.LED4_state = data_read.light_old;
-	}
-	/* Thu sao phoi do tu dong */
-	if (data_read.rain_old != read_Rain()){
-			data_read.rain_old = read_Rain();
-			if (data_read.rain_old == 1){
-				servo_position(1, 180);
+void smart_control(){
+	/* Cau hinh 1 nut bat tat che do tu dong */
+	if (automation_flash == 1){
+		data_read.pir = read_PIR();
+		data_read.light_sensor = read_Light_sensor();
+		data_read.rain = read_Rain();
+		
+		/* Doc cam bien PIR dieu khien den led phong khach tu dong */
+		control_Led(1, !data_read.pir);
+		FB.LED1_state = !data_read.pir; //auto update state of led1 to firebase
+
+		/* Doc cam bien anh sang dieu khien led san vuon tu dong */
+		control_Led(4, !data_read.light_sensor);
+		FB.LED4_state = !data_read.light_sensor;
+		
+		/* Thu sao phoi do tu dong */
+		if (data_read.rain == 1){
+				servo_position(2, 70);
 				HAL_Delay(100);
-			}
-			else{
-				servo_position(1, 0);
+		}
+		else{
+				servo_position(2, 0);
 				HAL_Delay(100);
-			}
-	}
+		}
+	
+		/* Nhiet do cao tu dong bat quat phong khach */
+		if (data_read.temperature > limit_temp){
+				control_Fan(1, 1);
+				FB.FAN1_state = 1;
+		}
+		else{
+				control_Fan(1, 0);
+				FB.FAN1_state = 0;
+		}
 	
 	/* Nhiet do cao tu bat quat phong khach */
-	if (data_read.temperature > limit_temp){
-			DV.FAN1_state = 1;
-	}
-	else{
-			DV.FAN1_state = 0;
-	}
+//	if (data_read.temperature > limit_temp){
+//			DV.FAN1_state = 1;
+//	}
+//	else{
+//			DV.FAN1_state = 0;
+//	}
 	
 	/* Phat hien khi gas bat quat nha bep */
-	if (data_read.gas_old > limit_gas){
-			DV.FAN2_state = 1;
 	}
-	else{
-			DV.FAN2_state = 0;
-	}
-		
 }
 
 /* Code for comunication with R305 using UART 3*/
-int p = -1;
 uint8_t txBuf[32];
 uint8_t rxBuf[32];
 uint8_t rxData;
 uint8_t rxIndex = 0;
-//uint16_t RxLastTime = 0;
-uint8_t PageID = 122;
-uint8_t test = 0, key = 0;
 
 /* Receive using ISR */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
@@ -519,7 +612,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 			rx_Index++;
 		}
 		else{
-				rx_Index = 0;
+			strcpy(temp_receive, rx_Buf);
+			HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_12); //bao hieu co data gui tu esp toi stm32
+			rx_Index = 0;
 		}
 		HAL_UART_Receive_IT(&huart6 , (uint8_t*)rxBuf_receive, 1);
 	}
@@ -531,6 +626,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		HAL_UART_Receive_IT(&huart3, &rxData, 1);
   }
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -542,7 +638,6 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
-  
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -577,12 +672,16 @@ int main(void)
 	servo_Init();
 	DHT11_Init();
 	
-	LCD_16x2_i2cDeviceCheck();
-	LCD_16x2_Init();
-	LCD_16x2_BackLight(LCD_BL_ON);
-	LCD_16x2_SetCursor(1,1);
-	LCD_16x2_Send_String("Hello",STR_NOSLIDE);
+	touch.state1 = 0;
+	touch.counter_1 = 0;
+	touch.counter_2 = 0;
 	
+//	LCD_16x2_i2cDeviceCheck();
+//	LCD_16x2_Init();
+//	LCD_16x2_BackLight(LCD_BL_ON);
+//	LCD_16x2_SetCursor(1,1);
+//	LCD_16x2_Send_String("GOOD DAY MASTER",STR_NOSLIDE);
+
 	LCD_20x4_i2cDeviceCheck();
 	LCD_20x4_Init();
 	LCD_20x4_BackLight(LCD_BL_ON);
@@ -590,17 +689,24 @@ int main(void)
 	LCD_20x4_Send_String("A: Quet van tay",STR_NOSLIDE);
 	LCD_20x4_SetCursor(2,1);
 	LCD_20x4_Send_String("B: Nhap mat khau",STR_NOSLIDE);
-	
+	LCD_20x4_SetCursor(3,1);
+	LCD_20x4_Send_String("C: Setting",STR_NOSLIDE);
 	
 	/* Begin receive data from uart 3 and uart 6*/
 	HAL_UART_Receive_IT(&huart6 , (uint8_t*)rxBuf_receive, 1);
 	HAL_UART_Receive_IT(&huart3, &rxData, 1);
+	
 	
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
+
+  /* Create the semaphores(s) */
+  /* definition and creation of BinSem */
+  osSemaphoreDef(BinSem);
+  BinSemHandle = osSemaphoreCreate(osSemaphore(BinSem), 1);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
@@ -615,21 +721,22 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of Check_wifi */
-  osThreadDef(Check_wifi, Check_wifiTask, osPriorityHigh, 0, 128);
-  Check_wifiHandle = osThreadCreate(osThread(Check_wifi), NULL);
+  /* definition and creation of Task01 */
+	//osPriorityHigh, osPriorityNormal, osPriorityLow
+  osThreadDef(Task01, Start_Task01, osPriorityNormal, 0, 128);
+  Task01Handle = osThreadCreate(osThread(Task01), NULL);
 
-  /* definition and creation of Finger_print */
-  osThreadDef(Finger_print, Finger_printTask, osPriorityNormal, 0, 128);
-  Finger_printHandle = osThreadCreate(osThread(Finger_print), NULL);
+  /* definition and creation of Task02 */
+  osThreadDef(Task02, Start_Task02, osPriorityNormal, 0, 128);
+  Task02Handle = osThreadCreate(osThread(Task02), NULL);
 
-  /* definition and creation of Data_processing */
-  osThreadDef(Data_processing, Data_processingTask, osPriorityRealtime, 0, 128);
-  Data_processingHandle = osThreadCreate(osThread(Data_processing), NULL);
+  /* definition and creation of Task03 */
+  osThreadDef(Task03, Start_Task03, osPriorityNormal, 0, 128);
+  Task03Handle = osThreadCreate(osThread(Task03), NULL);
 
-  /* definition and creation of Smart_control */
-  osThreadDef(Smart_control, Smart_controlTask, osPriorityAboveNormal, 0, 128);
-  Smart_controlHandle = osThreadCreate(osThread(Smart_control), NULL);
+  /* definition and creation of Task04 */
+  osThreadDef(Task04, Start_Task04, osPriorityNormal, 0, 128);
+  Task04Handle = osThreadCreate(osThread(Task04), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -637,7 +744,7 @@ int main(void)
 
   /* Start scheduler */
   osKernelStart();
-  
+
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
@@ -660,17 +767,18 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Configure the main internal regulator output voltage 
+  /** Configure the main internal regulator output voltage
   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the CPU, AHB and APB busses clocks
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 8;
   RCC_OscInitStruct.PLL.PLLN = 90;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
@@ -678,14 +786,14 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the CPU, AHB and APB busses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV4;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
@@ -710,7 +818,7 @@ static void MX_ADC1_Init(void)
   /* USER CODE BEGIN ADC1_Init 1 */
 
   /* USER CODE END ADC1_Init 1 */
-  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
   */
   hadc1.Instance = ADC1;
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
@@ -728,7 +836,7 @@ static void MX_ADC1_Init(void)
   {
     Error_Handler();
   }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
   sConfig.Channel = ADC_CHANNEL_13;
   sConfig.Rank = 1;
@@ -760,7 +868,7 @@ static void MX_ADC2_Init(void)
   /* USER CODE BEGIN ADC2_Init 1 */
 
   /* USER CODE END ADC2_Init 1 */
-  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
   */
   hadc2.Instance = ADC2;
   hadc2.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
@@ -778,7 +886,7 @@ static void MX_ADC2_Init(void)
   {
     Error_Handler();
   }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
   sConfig.Channel = ADC_CHANNEL_15;
   sConfig.Rank = 1;
@@ -873,7 +981,6 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 0 */
 
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
   TIM_OC_InitTypeDef sConfigOC = {0};
   TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
@@ -888,15 +995,6 @@ static void MX_TIM1_Init(void)
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   if (HAL_TIM_PWM_Init(&htim1) != HAL_OK)
   {
     Error_Handler();
@@ -956,7 +1054,6 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 0 */
 
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
   TIM_OC_InitTypeDef sConfigOC = {0};
 
@@ -969,15 +1066,6 @@ static void MX_TIM3_Init(void)
   htim3.Init.Period = 1000-1;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
   {
     Error_Handler();
@@ -1015,7 +1103,6 @@ static void MX_TIM9_Init(void)
 
   /* USER CODE END TIM9_Init 0 */
 
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM9_Init 1 */
@@ -1027,15 +1114,6 @@ static void MX_TIM9_Init(void)
   htim9.Init.Period = 100-1;
   htim9.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim9.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim9) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim9, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   if (HAL_TIM_PWM_Init(&htim9) != HAL_OK)
   {
     Error_Handler();
@@ -1175,11 +1253,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0|GPIO_PIN_2|GPIO_PIN_4, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_2|GPIO_PIN_4|GPIO_PIN_5 
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_2|GPIO_PIN_4|GPIO_PIN_5
                           |GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15 
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15
                           |GPIO_PIN_4|GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -1192,52 +1270,64 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA0 PA2 PA4 PA5 
+  /*Configure GPIO pins : PA0 PA2 PA4 PA5
                            PA6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_2|GPIO_PIN_4|GPIO_PIN_5 
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_2|GPIO_PIN_4|GPIO_PIN_5
                           |GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA1 PA3 PA7 PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_3|GPIO_PIN_7|GPIO_PIN_15;
+  /*Configure GPIO pins : PA1 PA3 PA7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_3|GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PE15 */
   GPIO_InitStruct.Pin = GPIO_PIN_15;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB13 PB15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_15;
+  /*Configure GPIO pin : PB13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD12 PD13 PD14 PD15 
+  /*Configure GPIO pins : PD12 PD13 PD14 PD15
                            PD4 PD6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15 
+  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15
                           |GPIO_PIN_4|GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : PA15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /*Configure GPIO pin : PC11 */
   GPIO_InitStruct.Pin = GPIO_PIN_11;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PD0 PD2 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_2;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB3 PB5 */
@@ -1247,107 +1337,156 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	/*Button 1*/
+	if (GPIO_Pin == GPIO_PIN_15){
+		if (touch.counter_1 > 0)
+		{
+			touch.state1 = !touch.state1;
+			control_Relay(touch.state1);
+		}
+		touch.counter_1 ++;
+		if (touch.counter_1 == 2){
+			touch.counter_1 = 1;
+		}		
+	}
+	
+	/*Button 2*/
+	if (GPIO_Pin == GPIO_PIN_13){
+		if (touch.counter_2 > 0)
+		{
+			automation_flash = !automation_flash;
+			if (automation_flash == 1){
+				LCD_16x2_Clear();
+				LCD_16x2_SetCursor(1,1);
+				LCD_16x2_Send_String("Auto mode is on", STR_NOSLIDE);
+				LCD_16x2_SetCursor(2,1);
+				LCD_16x2_Send_String("Limit temp:", STR_NOSLIDE);
+				LCD_16x2_SetCursor(2, 15);
+				LCD_16x2_Send_String(_limit_temp, STR_NOSLIDE);
+				HAL_Delay(200);
+			}
+			else{
+				LCD_16x2_Clear();
+				LCD_16x2_SetCursor(1,1);
+				LCD_16x2_Send_String("Auto mode is off", STR_NOSLIDE);
+				HAL_Delay(200);
+			}
+		}
+		touch.counter_2 ++;
+		if (touch.counter_2 == 2){
+			touch.counter_2 = 1;
+		}	
+	}
+}
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_Check_wifiTask */
+/* USER CODE BEGIN Header_Start_Task01 */
 /**
-  * @brief  Function implementing the Check_wifi thread.
-  * @param  argument: Not used 
+  * @brief  Function implementing the Task01 thread.
+  * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_Check_wifiTask */
-void Check_wifiTask(void const * argument)
+/* USER CODE END Header_Start_Task01 */
+void Start_Task01(void const * argument)
 {
+
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
-		if (check_wifi() == 0){
-			//connect with wifi fail 
-			control_led_onboard(0);
-		}
-		else if (check_wifi() == 2){
-			//smart config begin
-			blink_led_onboard();
-			HAL_Delay(100);
-		}
-		else if (check_wifi() == 1){
-			control_led_onboard(1);
-		}				
-		osDelay(100);
-  }
-  /* USER CODE END 5 */ 
-}
-
-/* USER CODE BEGIN Header_Finger_printTask */
-/**
-* @brief Function implementing the Finger_print thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Finger_printTask */
-void Finger_printTask(void const * argument)
-{
-  /* USER CODE BEGIN Finger_printTask */
-  /* Infinite loop */
-  for(;;)
-  {		
-		Enter();
-    osDelay(1);
-  }
-  /* USER CODE END Finger_printTask */
-}
-
-/* USER CODE BEGIN Header_Data_processingTask */
-/**
-* @brief Function implementing the Data_processing thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Data_processingTask */
-void Data_processingTask(void const * argument)
-{
-  /* USER CODE BEGIN Data_processingTask */
-  /* Infinite loop */
-  for(;;)
-  {
+		/*
 		stream();
-		check_data_stream();
-		send_stream();
-    osDelay(1);
+		save_stream();
+		stream_handle();
+		*/
+		osDelay(10);
   }
-  /* USER CODE END Data_processingTask */
+  /* USER CODE END 5 */
 }
 
-/* USER CODE BEGIN Header_Smart_controlTask */
+/* USER CODE BEGIN Header_Start_Task02 */
 /**
-* @brief Function implementing the Smart_control thread.
+* @brief Function implementing the Task02 thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_Smart_controlTask */
-void Smart_controlTask(void const * argument)
+/* USER CODE END Header_Start_Task02 */
+void Start_Task02(void const * argument)
 {
-  /* USER CODE BEGIN Smart_controlTask */
+  /* USER CODE BEGIN Start_Task02 */
+	/* Task dung cho doc cam bien: gas, dht11, current, hien thi lcd*/
   /* Infinite loop */
   for(;;)
   {
-		readSensor();
-		lcd_display();
-		read_button_all();
-		smart_control(30, 100);
-    osDelay(1);
+		/*
+		if(HAL_GetTick() - timeout_to_run_task2 >= 7500){
+			readSensor();
+		//osSemaphoreWait(BinSemHandle, osWaitForever);
+			lcd_display();
+		//osSemaphoreRelease(BinSemHandle);
+			timeout_to_run_task2 = HAL_GetTick();
+		}
+		*/
+    osDelay(10);
   }
-  /* USER CODE END Smart_controlTask */
+  /* USER CODE END Start_Task02 */
+}
+
+/* USER CODE BEGIN Header_Start_Task03 */
+/**
+* @brief Function implementing the Task03 thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Start_Task03 */
+void Start_Task03(void const * argument)
+{
+  /* USER CODE BEGIN Start_Task03 */
+  /* Infinite loop */
+  for(;;)
+  {
+		verify_password();
+    osDelay(10);
+  }
+  /* USER CODE END Start_Task03 */
+}
+
+/* USER CODE BEGIN Header_Start_Task04 */
+/**
+* @brief Function implementing the Task04 thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Start_Task04 */
+void Start_Task04(void const * argument)
+{
+  /* USER CODE BEGIN Start_Task04 */
+  /* Infinite loop */
+  for(;;)
+  {
+		/*
+		if(HAL_GetTick() - timeout_to_run_task4 >= 10000){
+			smart_control();
+			timeout_to_run_task4 = HAL_GetTick();
+		}
+		*/
+    osDelay(10);
+  }
+  /* USER CODE END Start_Task04 */
 }
 
 /**
   * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM10 interrupt took place, inside
+  * @note   This function is called  when TIM14 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
   * a global variable "uwTick" used as application time base.
   * @param  htim : TIM handle
@@ -1358,7 +1497,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM10) {
+  if (htim->Instance == TIM14) {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
@@ -1387,7 +1526,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

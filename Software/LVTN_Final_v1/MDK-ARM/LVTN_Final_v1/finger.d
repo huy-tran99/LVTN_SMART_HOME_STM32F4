@@ -36,5 +36,3 @@ lvtn_final_v1\finger.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 lvtn_final_v1\finger.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 lvtn_final_v1\finger.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 lvtn_final_v1\finger.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-lvtn_final_v1\finger.o: ..\..\LIB\LCD20x4\lcd_20x4.h
-lvtn_final_v1\finger.o: ..\..\LIB\Key_PAD\lib_keypad.h
