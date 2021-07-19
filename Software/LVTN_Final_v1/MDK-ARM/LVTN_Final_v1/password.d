@@ -41,3 +41,5 @@ lvtn_final_v1\password.o: ..\..\LIB\LCD20x4\lcd_20x4.h
 lvtn_final_v1\password.o: ..\..\LIB\Servo\Servo.h
 lvtn_final_v1\password.o: ..\..\LIB\Music\music.h
 lvtn_final_v1\password.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+lvtn_final_v1\password.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+lvtn_final_v1\password.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
