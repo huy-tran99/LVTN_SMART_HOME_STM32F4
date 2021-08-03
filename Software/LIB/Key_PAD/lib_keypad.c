@@ -26,6 +26,16 @@
 
 char read_keypad (void)
 {
+	/*Configure GPIO pin : PA15 */
+	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_15,GPIO_PIN_SET);	
+
+  /*Configure GPIO pin : PC11 */
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_11,GPIO_PIN_SET);	
+
+  /*Configure GPIO pins : PD0 PD2 */
+	HAL_GPIO_WritePin(GPIOD,GPIO_PIN_0,GPIO_PIN_SET);	
+	HAL_GPIO_WritePin(GPIOD,GPIO_PIN_2,GPIO_PIN_SET);
+	
 	/* Make ROW 1 LOW and all other ROWs HIGH */
 	HAL_GPIO_WritePin (R1_PORT, R1_PIN, GPIO_PIN_RESET);  //Pull the R1 low
 	HAL_GPIO_WritePin (R2_PORT, R2_PIN, GPIO_PIN_SET);  // Pull the R2 High

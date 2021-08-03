@@ -1,5 +1,7 @@
 #include "password.h"
 
+extern UART_HandleTypeDef huart6;
+extern char rxBuf_receive[2];
 char key_pad_value;
 
 char password_setup[4] = "1234";
@@ -11,6 +13,33 @@ char finger_id_delete[3];
 
 int dir = 0;
 int pass_correct = 0;
+
+void UART6_Init(void)
+{
+
+  /* USER CODE BEGIN USART6_Init 0 */
+
+  /* USER CODE END USART6_Init 0 */
+
+  /* USER CODE BEGIN USART6_Init 1 */
+
+  /* USER CODE END USART6_Init 1 */
+  huart6.Instance = USART6;
+  huart6.Init.BaudRate = 115200;
+  huart6.Init.WordLength = UART_WORDLENGTH_8B;
+  huart6.Init.StopBits = UART_STOPBITS_1;
+  huart6.Init.Parity = UART_PARITY_NONE;
+  huart6.Init.Mode = UART_MODE_TX_RX;
+  huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart6.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart6) != HAL_OK)
+  {
+  }
+  /* USER CODE BEGIN USART6_Init 2 */
+	HAL_UART_Receive_IT(&huart6 , (uint8_t*)rxBuf_receive, 1);
+  /* USER CODE END USART6_Init 2 */
+}
+
 
 void open_door(void)
 {
@@ -510,9 +539,31 @@ void check_password(){
 }
 
 void verify_password(){
+	//key_pad_value = NULL;
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /*Configure GPIO pin : PA15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_15;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PC11 */
+  GPIO_InitStruct.Pin = GPIO_PIN_11;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PD0 PD2 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_2;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 	key_pad_value = read_keypad();
-	HAL_Delay(10);
+	//HAL_Delay(10);
 	if(key_pad_value == 'A'){
+		HAL_UART_Abort(&huart6);
+		HAL_UART_Abort_IT(&huart6);
+		//HAL_UART_DeInit(&huart6);
 		LCD_20x4_Clear();
 		LCD_20x4_SetCursor(2,1);
 		LCD_20x4_Send_String("  Put your finger",STR_NOSLIDE);
@@ -534,7 +585,7 @@ void verify_password(){
 				HAL_Delay(1000);
 				break;
 			}
-			if ((key_pad_value == 'D') || (HAL_GetTick() - time_start_A >= 30000)){
+			if ((key_pad_value == 'D') || (HAL_GetTick() - time_start_A >= 20000)){
 				break;
 			}	
 		}
@@ -545,6 +596,8 @@ void verify_password(){
 		LCD_20x4_Send_String("B: Nhap mat khau",STR_NOSLIDE);
 		LCD_20x4_SetCursor(3,1);
 		LCD_20x4_Send_String("C: Cai dat",STR_NOSLIDE);
+		//HAL_UART_Init(&huart6);
+		UART6_Init();
 	}
 	if(key_pad_value == 'B'){
 		/* using password */
@@ -557,11 +610,12 @@ void verify_password(){
 		LCD_20x4_Send_String("D: Back. ",STR_NOSLIDE);	
 		long time_start_B = HAL_GetTick();
 		dir = 0; 
+		key_pad_value = NULL;
 		while(dir < 4)
 		{
 			key_pad_value = read_keypad();
 			check_password();
-			if ((key_pad_value == 'D') || (HAL_GetTick() - time_start_B >= 30000)){
+			if ((key_pad_value == 'D') || (HAL_GetTick() - time_start_B >= 20000)){
 				break;
 			}		
 		}
@@ -591,11 +645,12 @@ void verify_password(){
 		LCD_20x4_Send_String("D: Back. ",STR_NOSLIDE);	
 		long time_start_C = HAL_GetTick();
 		dir = 0; 
+		key_pad_value = NULL;
 		while(dir < 4)
 		{
 			key_pad_value = read_keypad();
 			check_password();
-			if ((key_pad_value == 'D') || (HAL_GetTick() - time_start_C >= 30000)){
+			if ((key_pad_value == 'D') || (HAL_GetTick() - time_start_C >= 20000)){
 				break;
 			}		
 		}
@@ -612,7 +667,7 @@ void verify_password(){
 			while (1)
 			{
 				key_pad_value = read_keypad();
-				if (key_pad_value == 'D'|| (HAL_GetTick() - time_start_C >= 30000)){
+				if (key_pad_value == 'D'|| (HAL_GetTick() - time_start_C >= 20000)){
 					break;
 				}
 				if (key_pad_value == 'A'){

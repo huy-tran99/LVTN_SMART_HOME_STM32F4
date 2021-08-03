@@ -530,20 +530,6 @@ void lcd_display(){
 		LCD_16x2_Send_String(display.GAS, STR_NOSLIDE);
 }
 
-void control_home(){
-	control_led_onboard(flash_wifi);
-	control_Led(1, DV.LED1_old_state);
-	control_Led(2, DV.LED2_old_state);
-	control_Led(3, DV.LED3_old_state);
-	control_Led(4, DV.LED4_old_state);
-	control_Fan(1, DV.FAN1_old_state);
-	control_Fan(2, DV.FAN2_old_state);
-	control_Relay(DV.RELAY_old_state);
-	control_Gate(DV.GATE_old_state);
-	control_Pole(DV.POLE_old_state);
-	control_Window(DV.WINDOW_old_state);
-}
-
 void smart_control(){
 	/* Cau hinh 1 nut bat tat che do tu dong */
 	if (automation_flash == 1){
@@ -618,13 +604,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 		}
 		HAL_UART_Receive_IT(&huart6 , (uint8_t*)rxBuf_receive, 1);
 	}
-	
+
 	if(UartHandle->Instance==USART3){
 		rxBuf[rxIndex] = rxData;	
 		if (rxIndex < (sizeof(rxBuf)-2))
 			rxIndex++;
 		HAL_UART_Receive_IT(&huart3, &rxData, 1);
-  }
+	}
 }
 
 /* USER CODE END 0 */
@@ -676,11 +662,11 @@ int main(void)
 	touch.counter_1 = 0;
 	touch.counter_2 = 0;
 	
-//	LCD_16x2_i2cDeviceCheck();
-//	LCD_16x2_Init();
-//	LCD_16x2_BackLight(LCD_BL_ON);
-//	LCD_16x2_SetCursor(1,1);
-//	LCD_16x2_Send_String("GOOD DAY MASTER",STR_NOSLIDE);
+	LCD_16x2_i2cDeviceCheck();
+	LCD_16x2_Init();
+	LCD_16x2_BackLight(LCD_BL_ON);
+	LCD_16x2_SetCursor(1,1);
+	LCD_16x2_Send_String("GOOD DAY MASTER",STR_NOSLIDE);
 
 	LCD_20x4_i2cDeviceCheck();
 	LCD_20x4_Init();
@@ -694,6 +680,7 @@ int main(void)
 	
 	/* Begin receive data from uart 3 and uart 6*/
 	HAL_UART_Receive_IT(&huart6 , (uint8_t*)rxBuf_receive, 1);
+	//HAL_UART_Receive_IT(&huart3, &rxData, 1);
 	HAL_UART_Receive_IT(&huart3, &rxData, 1);
 	
 	
@@ -722,12 +709,11 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of Task01 */
-	//osPriorityHigh, osPriorityNormal, osPriorityLow
-  osThreadDef(Task01, Start_Task01, osPriorityNormal, 0, 128);
+  osThreadDef(Task01, Start_Task01, osPriorityHigh, 0, 128);
   Task01Handle = osThreadCreate(osThread(Task01), NULL);
 
   /* definition and creation of Task02 */
-  osThreadDef(Task02, Start_Task02, osPriorityNormal, 0, 128);
+  osThreadDef(Task02, Start_Task02, osPriorityAboveNormal, 0, 128);
   Task02Handle = osThreadCreate(osThread(Task02), NULL);
 
   /* definition and creation of Task03 */
@@ -735,7 +721,7 @@ int main(void)
   Task03Handle = osThreadCreate(osThread(Task03), NULL);
 
   /* definition and creation of Task04 */
-  osThreadDef(Task04, Start_Task04, osPriorityNormal, 0, 128);
+  osThreadDef(Task04, Start_Task04, osPriorityLow, 0, 128);
   Task04Handle = osThreadCreate(osThread(Task04), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -1403,11 +1389,9 @@ void Start_Task01(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		/*
 		stream();
 		save_stream();
 		stream_handle();
-		*/
 		osDelay(10);
   }
   /* USER CODE END 5 */
@@ -1427,7 +1411,6 @@ void Start_Task02(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		/*
 		if(HAL_GetTick() - timeout_to_run_task2 >= 7500){
 			readSensor();
 		//osSemaphoreWait(BinSemHandle, osWaitForever);
@@ -1435,7 +1418,6 @@ void Start_Task02(void const * argument)
 		//osSemaphoreRelease(BinSemHandle);
 			timeout_to_run_task2 = HAL_GetTick();
 		}
-		*/
     osDelay(10);
   }
   /* USER CODE END Start_Task02 */
@@ -1451,10 +1433,17 @@ void Start_Task02(void const * argument)
 void Start_Task03(void const * argument)
 {
   /* USER CODE BEGIN Start_Task03 */
+	//HAL_UART_Receive_IT(&huart3, &rxData, 1);
   /* Infinite loop */
   for(;;)
   {
+		//osSemaphoreWait(BinSemHandle, osWaitForever);
 		verify_password();
+		//osSemaphoreRelease(BinSemHandle);
+//		if(HAL_GetTick() - timeout_to_run_task3 >= 5000){
+//			verify_password();
+//			timeout_to_run_task3 = HAL_GetTick();
+//		}
     osDelay(10);
   }
   /* USER CODE END Start_Task03 */
@@ -1473,12 +1462,10 @@ void Start_Task04(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		/*
 		if(HAL_GetTick() - timeout_to_run_task4 >= 10000){
 			smart_control();
 			timeout_to_run_task4 = HAL_GetTick();
 		}
-		*/
     osDelay(10);
   }
   /* USER CODE END Start_Task04 */

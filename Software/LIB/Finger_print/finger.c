@@ -72,7 +72,7 @@ uint8_t verifyPassword(void)
    Finger.TxBuffer[14] = 0x00; 
    Finger.TxBuffer[15] = 0x1B; 
 
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,16,200);
+   HAL_UART_Transmit_IT(&FINGERPRINT_USART,Finger.TxBuffer,16);
    rxIndex = 0;
    HAL_Delay(500);
    return receive_finger(12);
@@ -98,7 +98,7 @@ uint8_t getImage(void)
    Finger.TxBuffer[9]=0x01;
    Finger.TxBuffer[10]=0x00;
    Finger.TxBuffer[11]=0x05;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,12,200);
+   HAL_UART_Transmit_IT(&FINGERPRINT_USART,Finger.TxBuffer,12);
    rxIndex = 0;
    HAL_Delay(500);
    return receive_finger(12);
@@ -128,7 +128,7 @@ uint8_t image2Tz(uint8_t slot)
    Finger.TxBuffer[10]=slot;
    Finger.TxBuffer[11]=0x00;
    Finger.TxBuffer[12]=sum;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,13,200);
+   HAL_UART_Transmit_IT(&FINGERPRINT_USART,Finger.TxBuffer,13);
    rxIndex = 0;
    HAL_Delay(500);
    return receive_finger(12);
@@ -157,7 +157,7 @@ uint8_t match(void)
    Finger.TxBuffer[9]=0x03;
    Finger.TxBuffer[10]=0x00;
    Finger.TxBuffer[11]=0x07;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,12,200);
+   HAL_UART_Transmit_IT(&FINGERPRINT_USART,Finger.TxBuffer,12);
    rxIndex = 0;
    HAL_Delay(500);
    return receive_finger_match(14);
@@ -183,7 +183,7 @@ uint8_t createModel(void)
 	Finger.TxBuffer[9]=0x05;
 	Finger.TxBuffer[10]=0x00;
 	Finger.TxBuffer[11]=0x09;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,12,200);
+   HAL_UART_Transmit_IT(&FINGERPRINT_USART,Finger.TxBuffer,12);
 	rxIndex = 0;
 	HAL_Delay(500);
    return receive_finger(12);
@@ -214,7 +214,7 @@ uint8_t storeModel(uint8_t PageID)
    Finger.TxBuffer[12]=PageID;
 	Finger.TxBuffer[13]=0x00;
 	Finger.TxBuffer[14]=sum1;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,15,200);
+   HAL_UART_Transmit_IT(&FINGERPRINT_USART,Finger.TxBuffer,15);
 	rxIndex = 0;
 	HAL_Delay(500);
    return receive_finger(12);
@@ -250,7 +250,7 @@ uint8_t search(void)
    //tinh toan check sum
    Finger.TxBuffer[15]=0x01;
    Finger.TxBuffer[16]=0x0D;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,17,200);
+   HAL_UART_Transmit_IT(&FINGERPRINT_USART,Finger.TxBuffer,17);
    rxIndex = 0;
    HAL_Delay(500);
 	
@@ -285,7 +285,7 @@ uint8_t search_master(void)
    //tinh toan check sum
    Finger.TxBuffer[15]=0x00;
    Finger.TxBuffer[16]=0x0F;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,17,200);
+   HAL_UART_Transmit_IT(&FINGERPRINT_USART,Finger.TxBuffer,17);
 	rxIndex = 0;
 	HAL_Delay(500);
    return receive_finger_search(16);
@@ -312,7 +312,7 @@ uint8_t empty(void)
 	Finger.TxBuffer[9]=0x0D;
 	Finger.TxBuffer[10]=0x00;
 	Finger.TxBuffer[11]=0x11;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,12,200);
+   HAL_UART_Transmit_IT(&FINGERPRINT_USART,Finger.TxBuffer,12);
 	rxIndex = 0;
 	HAL_Delay(500);
    return receive_finger(12);
@@ -345,7 +345,7 @@ uint8_t deleteModel(uint8_t PageID)
    Finger.TxBuffer[13]=0x01;
    Finger.TxBuffer[14]=0x00;
    Finger.TxBuffer[15]=sum2;
-   HAL_UART_Transmit(&FINGERPRINT_USART,Finger.TxBuffer,16,200);
+   HAL_UART_Transmit_IT(&FINGERPRINT_USART,Finger.TxBuffer,16);
 	rxIndex = 0;
 	HAL_Delay(500);
    return receive_finger(12);
